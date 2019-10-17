@@ -16,6 +16,9 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("decoder", new ByteArrayDecoder());
         pipeline.addLast("encoder", new ByteArrayEncoder());
         // Handle the client.
+
+        System.out.println("Test client join");
+
         pipeline.addLast("clientHandler", new Client());
     }
 }

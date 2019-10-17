@@ -1,8 +1,8 @@
 package nl.jaimyputter.server.modules.world;
 
-import com.spraxs.js.framework.managers.IdManager;
 import lombok.Getter;
 import lombok.Setter;
+import nl.jaimyputter.server.framework.managers.IdManager;
 import nl.jaimyputter.server.modules.world.creatures.Creature;
 import nl.jaimyputter.server.modules.world.creatures.Player;
 

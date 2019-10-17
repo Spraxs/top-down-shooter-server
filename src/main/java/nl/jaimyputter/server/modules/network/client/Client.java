@@ -1,10 +1,5 @@
 package nl.jaimyputter.server.modules.network.client;
 
-import com.spraxs.js.modules.worldobjects.creatures.Player;
-import com.spraxs.js.modules.network.packet.Encryption;
-import com.spraxs.js.modules.network.packet.ReceivablePacket;
-import com.spraxs.js.modules.network.packet.RecievablePacketManager;
-import com.spraxs.js.modules.network.packet.SendablePacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,6 +9,7 @@ import nl.jaimyputter.server.modules.network.packets.Encryption;
 import nl.jaimyputter.server.modules.network.packets.ReceivablePacket;
 import nl.jaimyputter.server.modules.network.packets.ReceivablePacketManager;
 import nl.jaimyputter.server.modules.network.packets.SendablePacket;
+import nl.jaimyputter.server.modules.network.packets.sendable.PingClient;
 import nl.jaimyputter.server.modules.world.creatures.Player;
 
 import java.util.logging.Logger;
@@ -26,6 +22,33 @@ import java.util.logging.Logger;
 public class Client extends SimpleChannelInboundHandler<byte[]> {
 
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+
+    private boolean disconnected = false;
+
+    public Client() {
+
+        // Perform ping
+
+        Thread thread = new Thread(() -> {
+
+            while (!disconnected) {
+                try {
+                    Thread.sleep(1000 * 2);
+
+                    channelSend(new PingClient());
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.println("Ping stopped");
+
+        });
+
+        thread.start();
+
+    }
 
     private Channel channel;
     private @Getter String ip;
@@ -61,6 +84,7 @@ public class Client extends SimpleChannelInboundHandler<byte[]> {
     public void channelInactive(ChannelHandlerContext ctx) {
         // Disconnected.
         // WorldManager.removeClient(this);
-        LOGGER.finer("Client Disconnected: " + ctx.channel());
+        disconnected = true;
+        System.out.println("Client Disconnected: " + ctx.channel());
     }
 }
