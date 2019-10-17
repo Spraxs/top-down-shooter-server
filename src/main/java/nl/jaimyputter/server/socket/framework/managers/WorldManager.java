@@ -1,8 +1,8 @@
-package nl.jaimyputter.server.framework.managers;
+package nl.jaimyputter.server.socket.framework.managers;
 
-import nl.jaimyputter.server.modules.network.client.Client;
-import nl.jaimyputter.server.modules.world.WorldObject;
-import nl.jaimyputter.server.modules.world.creatures.Player;
+import nl.jaimyputter.server.socket.modules.network.client.Client;
+import nl.jaimyputter.server.socket.modules.world.WorldObject;
+import nl.jaimyputter.server.socket.modules.world.creatures.Player;
 
 import java.util.ArrayList;
 import java.util.List;

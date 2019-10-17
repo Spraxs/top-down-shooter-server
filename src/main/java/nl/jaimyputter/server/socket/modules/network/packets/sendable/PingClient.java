@@ -1,6 +1,6 @@
-package nl.jaimyputter.server.modules.network.packets.sendable;
+package nl.jaimyputter.server.socket.modules.network.packets.sendable;
 
-import nl.jaimyputter.server.modules.network.packets.SendablePacket;
+import nl.jaimyputter.server.socket.modules.network.packets.SendablePacket;
 
 /**
  * Created by Spraxs

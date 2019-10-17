@@ -1,7 +1,7 @@
-package nl.jaimyputter.server.modules.world.creatures;
+package nl.jaimyputter.server.socket.modules.world.creatures;
 
-import nl.jaimyputter.server.modules.network.client.Client;
-import nl.jaimyputter.server.modules.network.packets.SendablePacket;
+import nl.jaimyputter.server.socket.modules.network.client.Client;
+import nl.jaimyputter.server.socket.modules.network.packets.SendablePacket;
 
 import java.util.logging.Logger;
 

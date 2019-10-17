@@ -1,7 +1,7 @@
-package nl.jaimyputter.server.modules.network.packets.receivable;
+package nl.jaimyputter.server.socket.modules.network.packets.receivable;
 
-import nl.jaimyputter.server.modules.network.client.Client;
-import nl.jaimyputter.server.modules.network.packets.ReceivablePacket;
+import nl.jaimyputter.server.socket.modules.network.client.Client;
+import nl.jaimyputter.server.socket.modules.network.packets.ReceivablePacket;
 
 /**
  * Created by Spraxs

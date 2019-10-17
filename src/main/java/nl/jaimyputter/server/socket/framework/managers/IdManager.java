@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.framework.managers;
+package nl.jaimyputter.server.socket.framework.managers;
 
 /**
  * @author Pantelis Andrianakis

@@ -1,16 +1,16 @@
-package nl.jaimyputter.server.modules.network.client;
+package nl.jaimyputter.server.socket.modules.network.client;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.Getter;
 import lombok.Setter;
-import nl.jaimyputter.server.modules.network.packets.Encryption;
-import nl.jaimyputter.server.modules.network.packets.ReceivablePacket;
-import nl.jaimyputter.server.modules.network.packets.ReceivablePacketManager;
-import nl.jaimyputter.server.modules.network.packets.SendablePacket;
-import nl.jaimyputter.server.modules.network.packets.sendable.PingClient;
-import nl.jaimyputter.server.modules.world.creatures.Player;
+import nl.jaimyputter.server.socket.modules.network.packets.Encryption;
+import nl.jaimyputter.server.socket.modules.network.packets.ReceivablePacket;
+import nl.jaimyputter.server.socket.modules.network.packets.ReceivablePacketManager;
+import nl.jaimyputter.server.socket.modules.network.packets.SendablePacket;
+import nl.jaimyputter.server.socket.modules.network.packets.sendable.PingClient;
+import nl.jaimyputter.server.socket.modules.world.creatures.Player;
 
 import java.util.logging.Logger;
 

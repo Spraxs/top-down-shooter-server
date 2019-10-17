@@ -1,9 +1,9 @@
-package nl.jaimyputter.server.modules.world.creatures;
+package nl.jaimyputter.server.socket.modules.world.creatures;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.jaimyputter.server.modules.world.WorldObject;
-import nl.jaimyputter.server.utils.Rnd;
+import nl.jaimyputter.server.socket.modules.world.WorldObject;
+import nl.jaimyputter.server.socket.utils.Rnd;
 
 /**
  * Created by Spraxs

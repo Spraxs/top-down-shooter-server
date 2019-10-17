@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.framework;
+package nl.jaimyputter.server.socket.framework;
 
 public abstract class Module {
 
