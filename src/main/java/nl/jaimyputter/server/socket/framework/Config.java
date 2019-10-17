@@ -8,7 +8,7 @@ public final class Config {
 
     public static void load() {
 
-        SERVER_IP = "0.0.0.0";
+        SERVER_IP = "116.203.114.52";
         SERVER_PORT = 25565;
 
 

@@ -1,13 +1,13 @@
-package nl.jaimyputter.server;
+package nl.jaimyputter.server.socket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import nl.jaimyputter.server.framework.Config;
-import nl.jaimyputter.server.modules.network.ClientInitializer;
-import nl.jaimyputter.server.modules.network.packets.Encryption;
+import nl.jaimyputter.server.socket.framework.Config;
+import nl.jaimyputter.server.socket.modules.network.ClientInitializer;
+import nl.jaimyputter.server.socket.modules.network.packets.Encryption;
 
 import java.awt.*;
 import java.util.logging.Logger;

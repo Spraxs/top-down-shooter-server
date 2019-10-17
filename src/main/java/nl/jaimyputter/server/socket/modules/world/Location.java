@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.modules.world;
+package nl.jaimyputter.server.socket.modules.world;
 
 import lombok.Data;
 

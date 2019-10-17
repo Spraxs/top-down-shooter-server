@@ -1,10 +1,10 @@
-package nl.jaimyputter.server.modules.world;
+package nl.jaimyputter.server.socket.modules.world;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.jaimyputter.server.framework.managers.IdManager;
-import nl.jaimyputter.server.modules.world.creatures.Creature;
-import nl.jaimyputter.server.modules.world.creatures.Player;
+import nl.jaimyputter.server.socket.framework.managers.IdManager;
+import nl.jaimyputter.server.socket.modules.world.creatures.Creature;
+import nl.jaimyputter.server.socket.modules.world.creatures.Player;
 
 /**
  * Created by Spraxs

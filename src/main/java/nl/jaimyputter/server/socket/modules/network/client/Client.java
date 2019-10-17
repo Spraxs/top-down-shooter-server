@@ -72,6 +72,8 @@ public class Client extends SimpleChannelInboundHandler<byte[]> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, byte[] bytes) {
+        // Receive packet
+
         ReceivablePacketManager.handle(this, new ReceivablePacket(Encryption.decrypt(bytes)));
     }
 

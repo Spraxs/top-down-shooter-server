@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.utils;
+package nl.jaimyputter.server.socket.utils;
 
 import java.util.Random;
 

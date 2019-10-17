@@ -1,7 +1,7 @@
-package nl.jaimyputter.server.modules.network.packets;
+package nl.jaimyputter.server.socket.modules.network.packets;
 
-import nl.jaimyputter.server.modules.network.client.Client;
-import nl.jaimyputter.server.modules.network.packets.receivable.PingServer;
+import nl.jaimyputter.server.socket.modules.network.client.Client;
+import nl.jaimyputter.server.socket.modules.network.packets.receivable.PingServer;
 
 /**
  * Created by Spraxs
@@ -12,11 +12,9 @@ public class ReceivablePacketManager {
 
     public static void handle(Client client, ReceivablePacket packet) {
 
-        new PingServer(client, packet);
-
         switch (packet.readShort()) {
             case 0: {
-                //    new AccountAuthenticationRequest(client, packet);
+                new PingServer(client, packet);
                 break;
             }
             case 2: {

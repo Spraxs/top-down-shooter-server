@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.modules.network.packets;
+package nl.jaimyputter.server.socket.modules.network.packets;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

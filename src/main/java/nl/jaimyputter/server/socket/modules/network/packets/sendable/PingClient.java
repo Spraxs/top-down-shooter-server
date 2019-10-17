@@ -16,7 +16,7 @@ public class PingClient extends SendablePacket {
 
         long time = System.currentTimeMillis();
 
-        System.out.println("Begin: " + time);
+        System.out.println(time);
 
         writeLong(time);
     }

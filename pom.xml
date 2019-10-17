@@ -24,7 +24,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.spraxs.js.Server</mainClass>
+                            <mainClass>nl.jaimyputter.server.web.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
