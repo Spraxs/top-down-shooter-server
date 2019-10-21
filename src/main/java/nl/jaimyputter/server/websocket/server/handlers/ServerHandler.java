@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.websocket;
+package nl.jaimyputter.server.websocket.server.handlers;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -19,6 +19,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
+import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpMethod.*;
@@ -28,7 +29,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 /**
  * Handles handshakes and messages
  */
-public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
+public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
     private static final String WEBSOCKET_PATH = "/websocket";
 
@@ -63,7 +64,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
         // Send the demo page and favicon.ico
         if ("/".equals(req.getUri())) {
-            ByteBuf content = WebSocketServerBenchmarkPage.getContent(getWebSocketLocation(req));
+            ByteBuf content = ServerBenchmarkPage.getContent(getWebSocketLocation(req));
             FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
 
             res.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
@@ -137,7 +138,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
     private static String getWebSocketLocation(FullHttpRequest req) {
         String location =  req.headers().get(HOST) + WEBSOCKET_PATH;
-        if (Main.SSL) {
+        if (ServerModule.SSL) {
             return "wss://" + location;
         } else {
             return "ws://" + location;

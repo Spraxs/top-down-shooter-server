@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.websocket;
+package nl.jaimyputter.server.websocket.server.utils;
 
 
 import io.netty.buffer.ByteBuf;
@@ -8,7 +8,7 @@ import io.netty.util.CharsetUtil;
 /**
  * Generates the benchmark HTML page which is served at http://localhost:8080/
  */
-public final class WebSocketServerBenchmarkPage {
+public final class ServerBenchmarkPage {
 
     private static final String NEWLINE = "\r\n";
 
@@ -171,7 +171,7 @@ public final class WebSocketServerBenchmarkPage {
                         "</html>" + NEWLINE, CharsetUtil.US_ASCII);
     }
 
-    private WebSocketServerBenchmarkPage() {
+    private ServerBenchmarkPage() {
         // Unused
     }
 }

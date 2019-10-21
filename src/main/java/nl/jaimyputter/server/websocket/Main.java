@@ -23,6 +23,17 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import lombok.Getter;
+import nl.jaimyputter.server.websocket.framework.Module;
+import nl.jaimyputter.server.websocket.server.initializer.ServerInitializer;
+import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
+
+import javax.net.ssl.SSLException;
+import java.lang.reflect.InvocationTargetException;
+import java.security.cert.CertificateException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A Benchmark application for websocket which is served at:
@@ -34,10 +45,30 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
  */
 public final class Main {
 
-    static final boolean SSL = System.getProperty("ssl") != null;
-    static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
+    public static final boolean SSL = System.getProperty("ssl") != null;
+    public static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
 
-    public static void main(String[] args) throws Exception {
+    private static Main Instance;
+
+    private @Getter ConcurrentHashMap<Class, Module> modules = new ConcurrentHashMap<>();
+
+    private Main() {
+        Instance = this;
+
+        try {
+            setupServer();
+        } catch (CertificateException | InterruptedException | SSLException e) {
+            System.out.println("Server startup error:");
+            e.printStackTrace();
+
+            System.exit(1);
+            return;
+        }
+
+        onStart();
+    }
+
+    public void setupServer() throws CertificateException, SSLException, InterruptedException {
         // Configure SSL.
         final SslContext sslCtx;
         if (SSL) {
@@ -53,7 +84,7 @@ public final class Main {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new WebSocketServerInitializer(sslCtx));
+                    .childHandler(new ServerInitializer(sslCtx));
 
             Channel ch = b.bind(PORT).sync().channel();
 
@@ -65,5 +96,55 @@ public final class Main {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    private void onStart() {
+
+        initModules();
+
+        enableModulesWithPriority();
+    }
+
+    public static void main(String[] args) throws Exception {
+        new Main();
+    }
+
+    // Enabled modules in order of Priority
+    private void enableModulesWithPriority() {
+        modules.values().stream().sorted(Collections.reverseOrder(Comparator.comparing(Module::getPriority))).forEach(Module::startModule);
+    }
+
+    // Cast all module classes to Module and enable them
+    private void initModules() {
+        ReflectionUtil.moduleClassScan(clazz -> {
+            try {
+                Module module = (Module) clazz.getDeclaredConstructor().newInstance();
+
+                modules.put(clazz, module);
+
+                module.initModelePriority();
+
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }, getClass().getPackage().getName());
+    }
+
+    // Disables all modules
+    private void disableModules() {
+        modules.values().stream().sorted(Comparator.comparing(Module::getPriority)).forEach(Module::endModule);
+    }
+
+    /**
+     * Gets the plugin instance.
+     *
+     * @return  the RadiationPlugin
+     */
+    public static Main getInstance() {
+        return Instance;
+    }
+
+    public static <T extends Module> T byModule(Class<T> moduleClass) {
+        return ReflectionUtil.getModule(moduleClass, getInstance().getModules());
     }
 }
