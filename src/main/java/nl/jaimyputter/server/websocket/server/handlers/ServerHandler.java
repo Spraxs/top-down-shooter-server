@@ -19,6 +19,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
+import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
@@ -138,7 +139,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
     private static String getWebSocketLocation(FullHttpRequest req) {
         String location =  req.headers().get(HOST) + WEBSOCKET_PATH;
-        if (ServerModule.SSL) {
+        if (Main.SSL) {
             return "wss://" + location;
         } else {
             return "ws://" + location;

@@ -1,6 +1,5 @@
 package nl.jaimyputter.server.websocket.utils;
-import lombok.NonNull;
-import nl.jaimyputter.server.websocket.framework.Module;
+import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
 import org.reflections.Reflections;
 

@@ -24,7 +24,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import lombok.Getter;
-import nl.jaimyputter.server.websocket.framework.Module;
+import nl.jaimyputter.server.websocket.framework.modular.Module;
+import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 import nl.jaimyputter.server.websocket.server.initializer.ServerInitializer;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
 
@@ -52,50 +53,64 @@ public final class Main {
 
     private @Getter ConcurrentHashMap<Class, Module> modules = new ConcurrentHashMap<>();
 
+
+
     private Main() {
         Instance = this;
 
-        try {
-            setupServer();
-        } catch (CertificateException | InterruptedException | SSLException e) {
-            System.out.println("Server startup error:");
-            e.printStackTrace();
-
-            System.exit(1);
-            return;
-        }
-
         onStart();
+        setupServer();
     }
 
-    public void setupServer() throws CertificateException, SSLException, InterruptedException {
-        // Configure SSL.
-        final SslContext sslCtx;
-        if (SSL) {
-            SelfSignedCertificate ssc = new SelfSignedCertificate();
-            sslCtx = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
-        } else {
-            sslCtx = null;
-        }
+    public void setupServer() {
+        new Task() {
 
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ServerInitializer(sslCtx));
+            @Override
+            public void run() {
+                // Configure SSL.
+                SslContext sslCtx = null;
+                if (SSL) {
+                    SelfSignedCertificate ssc = null;
+                    try {
+                        ssc = new SelfSignedCertificate();
+                    } catch (CertificateException e) {
+                        e.printStackTrace();
+                    }
 
-            Channel ch = b.bind(PORT).sync().channel();
+                    try {
+                        sslCtx = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
+                    } catch (SSLException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-            System.out.println("Open your web browser and navigate to " +
-                    (SSL? "https" : "http") + "://127.0.0.1:" + PORT + '/');
+                EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+                EventLoopGroup workerGroup = new NioEventLoopGroup();
+                try {
+                    ServerBootstrap b = new ServerBootstrap();
+                    b.group(bossGroup, workerGroup)
+                            .channel(NioServerSocketChannel.class)
+                            .childHandler(new ServerInitializer(sslCtx));
 
-            ch.closeFuture().sync();
-        } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
-        }
+                    Channel ch = b.bind(PORT).sync().channel();
+
+                    System.out.println("Open your web browser and navigate to " +
+                            (SSL? "https" : "http") + "://127.0.0.1:" + PORT + '/');
+
+                    ch.closeFuture().sync();
+                } catch (InterruptedException e) {
+                    // Server error
+                    System.out.println("Server startup error:");
+                    e.printStackTrace();
+
+                    System.exit(1);
+
+                } finally {
+                    bossGroup.shutdownGracefully();
+                    workerGroup.shutdownGracefully();
+                }
+            }
+        }.runNewThread("server");
     }
 
     private void onStart() {
@@ -105,7 +120,7 @@ public final class Main {
         enableModulesWithPriority();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         new Main();
     }
 
