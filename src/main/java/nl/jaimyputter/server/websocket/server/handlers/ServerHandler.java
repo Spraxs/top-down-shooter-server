@@ -32,6 +32,8 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  */
 public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
+    //TODO Make client object
+
     private static final String WEBSOCKET_PATH = "/websocket";
 
     private WebSocketServerHandshaker handshaker;
@@ -48,6 +50,34 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
+    }
+
+    private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
+
+        // Check for closing frame
+        if (frame instanceof CloseWebSocketFrame) {
+            handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+            return;
+        }
+        if (frame instanceof PingWebSocketFrame) {
+            ctx.write(new PongWebSocketFrame(frame.content().retain()));
+            return;
+        }
+        if (frame instanceof TextWebSocketFrame) {
+
+            System.out.println("text");
+
+            // Echo the frame
+            ctx.write(frame.retain());
+            return;
+        }
+        if (frame instanceof BinaryWebSocketFrame) {
+            System.out.println("binary");
+
+            // Echo the frame
+            ctx.write(frame.retain());
+            return;
+        }
     }
 
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
@@ -88,29 +118,6 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {
             handshaker.handshake(ctx.channel(), req);
-        }
-    }
-
-    private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
-
-        // Check for closing frame
-        if (frame instanceof CloseWebSocketFrame) {
-            handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
-            return;
-        }
-        if (frame instanceof PingWebSocketFrame) {
-            ctx.write(new PongWebSocketFrame(frame.content().retain()));
-            return;
-        }
-        if (frame instanceof TextWebSocketFrame) {
-            // Echo the frame
-            ctx.write(frame.retain());
-            return;
-        }
-        if (frame instanceof BinaryWebSocketFrame) {
-            // Echo the frame
-            ctx.write(frame.retain());
-            return;
         }
     }
 

@@ -2,7 +2,6 @@ package nl.jaimyputter.server.websocket.modules.task;
 
 import io.netty.util.internal.ConcurrentSet;
 import lombok.Getter;
-import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
 import nl.jaimyputter.server.websocket.modules.task.framework.Task;

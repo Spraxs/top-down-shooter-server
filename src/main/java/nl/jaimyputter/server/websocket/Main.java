@@ -53,8 +53,6 @@ public final class Main {
 
     private @Getter ConcurrentHashMap<Class, Module> modules = new ConcurrentHashMap<>();
 
-
-
     private Main() {
         Instance = this;
 
