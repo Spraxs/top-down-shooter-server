@@ -7,8 +7,6 @@ import nl.jaimyputter.server.socket.modules.network.packets.SendablePacket;
  * Date: 10/17/2019
  */
 
-//TODO Fix ByteArrayOutputStream to C#
-
 public class PingClient extends SendablePacket {
 
     public PingClient() {

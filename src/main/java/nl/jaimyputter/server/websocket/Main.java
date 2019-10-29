@@ -26,7 +26,7 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 import lombok.Getter;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.modules.task.framework.Task;
-import nl.jaimyputter.server.websocket.server.initializer.ServerInitializer;
+import nl.jaimyputter.server.websocket.server.initializer.ClientInitializer;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
 
 import javax.net.ssl.SSLException;
@@ -88,7 +88,7 @@ public final class Main {
                     ServerBootstrap b = new ServerBootstrap();
                     b.group(bossGroup, workerGroup)
                             .channel(NioServerSocketChannel.class)
-                            .childHandler(new ServerInitializer(sslCtx));
+                            .childHandler(new ClientInitializer(sslCtx));
 
                     Channel ch = b.bind(PORT).sync().channel();
 
