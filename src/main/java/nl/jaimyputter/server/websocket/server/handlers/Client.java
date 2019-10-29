@@ -2,10 +2,7 @@ package nl.jaimyputter.server.websocket.server.handlers;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -19,7 +16,15 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
+import lombok.Getter;
+import lombok.Setter;
+import nl.jaimyputter.server.socket.modules.network.packets.SendablePacket;
 import nl.jaimyputter.server.websocket.Main;
+import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
+import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerSpawn;
+import nl.jaimyputter.server.websocket.modules.world.WorldModule;
+import nl.jaimyputter.server.websocket.server.Server;
 import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
@@ -30,13 +35,39 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 /**
  * Handles handshakes and messages
  */
-public class ServerHandler extends SimpleChannelInboundHandler<Object> {
-
-    //TODO Make client object
+public class Client extends SimpleChannelInboundHandler<Object> {
 
     private static final String WEBSOCKET_PATH = "/websocket";
 
     private WebSocketServerHandshaker handshaker;
+
+    private Channel channel;
+    private String ip;
+    private @Getter @Setter String accountName;
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext channelHandlerContext) { // connect client
+        Server.addClient(this);
+
+        channel = channelHandlerContext.channel();
+        ip = channel.remoteAddress().toString();
+        ip = ip.substring(1, ip.lastIndexOf(':')); // Trim out /127.0.0.1:12345
+
+        System.out.println("Client connected");
+
+        // Create player
+        Main.byModule(WorldModule.class).createPlayer(this, accountName);
+
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) { // disconnect client
+        Server.removeClient(this);
+
+        System.out.println("Client disconnected");
+
+        Main.byModule(WorldModule.class).removePlayer(this);
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
@@ -48,8 +79,20 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.flush();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext channelHandlerContext) {
+        channel.flush();
+    }
+
+    public void channelSend(PacketOut packet) {
+        if (channel.isActive())  {
+            channel.writeAndFlush(packet.getSendableBytes());
+        }
     }
 
     private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
@@ -64,15 +107,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
             return;
         }
         if (frame instanceof TextWebSocketFrame) {
-
-            System.out.println("text");
-
             // Echo the frame
             ctx.write(frame.retain());
             return;
         }
         if (frame instanceof BinaryWebSocketFrame) {
-            System.out.println("binary");
 
             // Echo the frame
             ctx.write(frame.retain());
@@ -136,12 +175,6 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
         if (!HttpHeaders.isKeepAlive(req) || res.getStatus().code() != 200) {
             f.addListener(ChannelFutureListener.CLOSE);
         }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        ctx.close();
     }
 
     private static String getWebSocketLocation(FullHttpRequest req) {

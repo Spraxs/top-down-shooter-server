@@ -6,23 +6,23 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
-import nl.jaimyputter.server.websocket.server.handlers.ServerHandler;
+import nl.jaimyputter.server.websocket.server.handlers.Client;
 
 /**
  * Created by Spraxs
  * Date: 10/20/2019
  */
 
-public class ServerInitializer extends ChannelInitializer<SocketChannel> {
+public class ClientInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;
 
-    public ServerInitializer(SslContext sslCtx) {
+    public ClientInitializer(SslContext sslCtx) {
         this.sslCtx = sslCtx;
     }
 
     @Override
-    public void initChannel(SocketChannel ch) throws Exception {
+    public void initChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
         if (sslCtx != null) {
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));
@@ -30,6 +30,6 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new HttpObjectAggregator(65536));
 
-        pipeline.addLast(new ServerHandler()); // Add new client
+        pipeline.addLast(new Client()); // Add new client
     }
 }

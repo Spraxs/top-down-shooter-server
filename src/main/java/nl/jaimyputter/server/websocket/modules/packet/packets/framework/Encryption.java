@@ -1,4 +1,4 @@
-package nl.jaimyputter.server.socket.modules.network.packets;
+package nl.jaimyputter.server.websocket.modules.packet.packets.framework;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
