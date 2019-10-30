@@ -1,10 +1,12 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.framework;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 /**
@@ -42,14 +44,16 @@ public class Encryption {
 
     public static byte[] encrypt(byte[] bytes)
     {
+
+
         try
         {
             final Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, _key, _ivParameterSpec);
             return cipher.doFinal(bytes);
-        }
-        catch (Exception e)
-        {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException e) {
+            e.printStackTrace();
+
             return null;
         }
     }

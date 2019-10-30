@@ -23,7 +23,9 @@ import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerSpawn;
+import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 import nl.jaimyputter.server.websocket.modules.world.WorldModule;
+import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.Server;
 import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
@@ -37,6 +39,10 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  */
 public class Client extends SimpleChannelInboundHandler<Object> {
 
+    public Client() {
+        client = this;
+    }
+
     private static final String WEBSOCKET_PATH = "/websocket";
 
     private WebSocketServerHandshaker handshaker;
@@ -44,19 +50,32 @@ public class Client extends SimpleChannelInboundHandler<Object> {
     private Channel channel;
     private String ip;
     private @Getter @Setter String accountName;
+    private Client client;
 
     @Override
-    public void handlerAdded(ChannelHandlerContext channelHandlerContext) { // connect client
+    public void handlerAdded(ChannelHandlerContext ctx) { // connect client
         Server.addClient(this);
 
-        channel = channelHandlerContext.channel();
+        channel = ctx.channel();
         ip = channel.remoteAddress().toString();
         ip = ip.substring(1, ip.lastIndexOf(':')); // Trim out /127.0.0.1:12345
 
         System.out.println("Client connected");
 
+
         // Create player
-        Main.byModule(WorldModule.class).createPlayer(this, accountName);
+       // Main.byModule(WorldModule.class).createPlayer(this, accountName);
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000 * 10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ctx.writeAndFlush(new BinaryWebSocketFrame(Unpooled.copiedBuffer(("" + System.currentTimeMillis()).getBytes())));
+
+            System.out.println("Test send!");
+        }).start();
 
     }
 
@@ -65,8 +84,6 @@ public class Client extends SimpleChannelInboundHandler<Object> {
         Server.removeClient(this);
 
         System.out.println("Client disconnected");
-
-        Main.byModule(WorldModule.class).removePlayer(this);
     }
 
     @Override
@@ -91,6 +108,8 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
     public void channelSend(PacketOut packet) {
         if (channel.isActive())  {
+
+            System.out.println("Send packet..");
             channel.writeAndFlush(packet.getSendableBytes());
         }
     }
@@ -99,6 +118,8 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
         // Check for closing frame
         if (frame instanceof CloseWebSocketFrame) {
+           // Main.byModule(WorldModule.class).removePlayer(this); // Remove player on disconnect
+
             handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
         }
@@ -115,6 +136,7 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
             // Echo the frame
             ctx.write(frame.retain());
+
             return;
         }
     }

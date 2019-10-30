@@ -25,6 +25,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import lombok.Getter;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
+import nl.jaimyputter.server.websocket.modules.packet.packets.framework.Encryption;
 import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 import nl.jaimyputter.server.websocket.server.initializer.ClientInitializer;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
@@ -112,6 +113,8 @@ public final class Main {
     }
 
     private void onStart() {
+
+        Encryption.init();
 
         initModules();
 

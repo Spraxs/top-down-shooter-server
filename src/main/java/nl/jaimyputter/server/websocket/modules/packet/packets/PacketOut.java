@@ -107,6 +107,8 @@ public class PacketOut {
         System.arraycopy(lengthBytes, 0, result, 0, 2);
         System.arraycopy(encryptedBytes, 0, result, 2, size);
 
+
+
         // Return the data.
         return result;
     }
