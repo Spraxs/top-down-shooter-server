@@ -65,21 +65,6 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
         System.out.println("Client connected");
 
-
-        // Create player
-       // Main.byModule(WorldModule.class).createPlayer(this, accountName);
-
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000 * 10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            ctx.writeAndFlush(new BinaryWebSocketFrame(Unpooled.copiedBuffer(("" + System.currentTimeMillis()).getBytes())));
-
-            System.out.println("Test send!");
-        }).start();
-
     }
 
     @Override
@@ -113,7 +98,8 @@ public class Client extends SimpleChannelInboundHandler<Object> {
         if (channel.isActive())  {
 
             System.out.println("Send packet..");
-            channel.writeAndFlush(packet.getSendableBytes());
+
+            channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.copiedBuffer(packet.getSendableBytes())));
         }
     }
 

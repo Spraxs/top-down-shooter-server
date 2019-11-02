@@ -86,12 +86,9 @@ public class PacketOut {
 
     public byte[] getSendableBytes() {
 
-        System.out.println("Test: " + _baos.toByteArray());
-
+        /* Encryption
         // Encrypt bytes.
         final byte[] encryptedBytes = Encryption.encrypt(_baos.toByteArray());
-
-        System.out.println(encryptedBytes);
 
         final int size = encryptedBytes.length;
 
@@ -106,8 +103,11 @@ public class PacketOut {
         System.arraycopy(encryptedBytes, 0, result, 2, size);
 
 
-
         // Return the data.
         return result;
+
+        */
+
+        return _baos.toByteArray();
     }
 }
