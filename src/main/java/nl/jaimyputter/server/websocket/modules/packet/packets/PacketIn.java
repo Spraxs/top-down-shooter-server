@@ -16,6 +16,32 @@ public class PacketIn {
         _bais = new ByteArrayInputStream(bytes);
     }
 
+    public Object readNext(Class<?> type) {
+
+        // TODO Fix type checks, they are not working
+
+        if (type == String.class) {
+            readString();
+        } else if (type == byte.class) {
+            readByte();
+        } else if (type == short.class) {
+            readShort();
+        } else if (type == Integer.class) {
+            readInt();
+        } else if (type == long.class) {
+            readLong();
+        } else if (type == float.class) {
+            readFloat();
+        } else if (type == double.class) {
+            readDouble();
+        }
+
+        System.out.println(type.getName());
+
+        return null;
+    }
+
+
     public String readString() {
         String result = "";
         try {
@@ -26,7 +52,7 @@ public class PacketIn {
         return result;
     }
 
-    public byte[] readBytes(int length) {
+    private byte[] readBytes(int length) {
         final byte[] result = new byte[length];
         for (int i = 0; i < length; i++)
         {

@@ -1,6 +1,8 @@
 package nl.jaimyputter.server.websocket.utils;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
+import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
+import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -85,6 +87,31 @@ public final class ReflectionUtil {
         Reflections reflections = new Reflections(packageName);
 
         return reflections.getTypesAnnotatedWith(annotation);
+    }
+    /*
+     * * Packet Reflection * *
+     */
+
+    /**
+     * Returns the @PacketId annotation on a Class if present
+     *
+     * @param c the class to examine
+     * @return the annotation.  may be null.
+     */
+    public static PacketId getClassPacketIdAnnotation(final Class c) {
+        return getAnnotation(c, PacketId.class);
+    }
+
+    /**
+     * Gets classes that extends from PacketIn class within package.
+     *
+     * @param packageName name of package.
+     * @return Collection of classes who extend from PacketIn
+     */
+    public static Set<Class<? extends PacketIn>> getIncomingPacketClasses(String packageName) {
+        Reflections reflections = new Reflections(packageName);
+
+        return reflections.getSubTypesOf(PacketIn.class);
     }
 
     /*

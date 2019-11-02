@@ -2,12 +2,17 @@ package nl.jaimyputter.server.websocket.modules.packet;
 
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
+import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 import nl.jaimyputter.server.websocket.server.Server;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
+import org.reflections.Reflections;
 
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +28,11 @@ public class PacketModule extends Module {
         super("Packet");
     }
 
-    private Map<Short, Class<? extends PacketIn>> packetClasses = new HashMap<>();
+    private Map<Short, Class<? extends PacketIn>> packetInClasses = new HashMap<>();
 
     @Override
     public void onStart() {
-
+        registerIncomingPackets();
     }
 
     public void sendPacketToAllClients(PacketOut packet) {
@@ -38,11 +43,51 @@ public class PacketModule extends Module {
         Server.getOnlineClients().stream().filter(client -> client != filteredClient).forEach(client -> client.channelSend(packet));
     }
 
-    public PacketIn GetIncomingPacket(byte[] bytes) {
-        PacketIn packetIn = new PacketIn(bytes);
+    public <T extends PacketIn> T getIncomingPacket(byte[] bytes) {
 
-        Class<? extends PacketIn> correctPacketClass = packetClasses.get(packetIn.readShort());
+        ByteArrayInputStream _bais = new ByteArrayInputStream(bytes);
+
+        short id = (short) ((_bais.read() & 0xff) | ((_bais.read() << 8) & 0xff00)); // Read & remove packet id from input stream
+
+        Class<? extends PacketIn> correctPacketClass = packetInClasses.get(id);
+
+        System.out.println(correctPacketClass);
+
+        try {
+            T packetIn = (T) correctPacketClass.getDeclaredConstructor(byte[].class).newInstance(bytes);
+
+            Field[] fields = correctPacketClass.getFields();
+
+            for (Field field : fields) {
+                Object object = packetIn.readNext(field.getType());
+                field.set(packetIn, object);
+
+                System.out.println("Packet field " + field.getName() + " set to " + object.toString());
+            }
 
 
+            return packetIn;
+
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private void registerIncomingPackets() {
+
+        ReflectionUtil.getIncomingPacketClasses(getClass().getPackage().getName()).forEach(clazz -> {
+            PacketId packetId = ReflectionUtil.getClassPacketIdAnnotation(clazz);
+
+            if (packetId == null) {
+                throw new NullPointerException("Packet class " + clazz.getSimpleName() + " has no @PacketId annotation!");
+            } else {
+
+                short id = (short) packetId.value();
+
+                packetInClasses.put(id, clazz);
+            }
+        });
     }
 }

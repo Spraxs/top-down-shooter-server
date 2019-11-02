@@ -41,9 +41,12 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
     public Client() {
         client = this;
+        packetModule = Main.byModule(PacketModule.class);
     }
 
     private static final String WEBSOCKET_PATH = "/websocket";
+
+    private PacketModule packetModule;
 
     private WebSocketServerHandshaker handshaker;
 
@@ -135,7 +138,14 @@ public class Client extends SimpleChannelInboundHandler<Object> {
         if (frame instanceof BinaryWebSocketFrame) {
 
             // Echo the frame
-            ctx.write(frame.retain());
+            //ctx.write(frame.retain());
+
+            ByteBuf buf = frame.content();
+
+            byte[] bytes = new byte[buf.readableBytes()];
+            buf.readBytes(bytes);
+
+            packetModule.getIncomingPacket(bytes);
 
             return;
         }
