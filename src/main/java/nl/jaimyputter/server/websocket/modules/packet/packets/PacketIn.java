@@ -8,35 +8,45 @@ import java.io.ByteArrayInputStream;
  */
 
 
-public class PacketIn {
+public abstract class PacketIn {
 
     private final ByteArrayInputStream _bais;
 
-    public PacketIn(byte[] bytes) {
-        _bais = new ByteArrayInputStream(bytes);
+    public PacketIn(ByteArrayInputStream bais) {
+        _bais = bais;
     }
+
+    public abstract void onDataHandled();
 
     public Object readNext(Class<?> type) {
 
-        // TODO Fix type checks, they are not working
-
-        if (type == String.class) {
-            readString();
-        } else if (type == byte.class) {
-            readByte();
-        } else if (type == short.class) {
-            readShort();
-        } else if (type == Integer.class) {
-            readInt();
-        } else if (type == long.class) {
-            readLong();
-        } else if (type == float.class) {
-            readFloat();
-        } else if (type == double.class) {
-            readDouble();
+        if (type.equals(String.class)) {
+            return readString();
         }
 
-        System.out.println(type.getName());
+        if (type.equals(byte.class)) {
+            return readByte();
+        }
+
+        if (type.equals(short.class)) {
+            return readShort();
+        }
+
+        if (type.equals(int.class)) {
+            return readInt();
+        }
+
+        if (type.equals(long.class)) {
+            return readLong();
+        }
+
+        if (type.equals(float.class)) {
+            return readFloat();
+        }
+
+        if (type.equals(double.class)) {
+            return readDouble();
+        }
 
         return null;
     }

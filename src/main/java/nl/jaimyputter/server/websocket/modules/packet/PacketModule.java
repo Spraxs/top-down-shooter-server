@@ -51,10 +51,8 @@ public class PacketModule extends Module {
 
         Class<? extends PacketIn> correctPacketClass = packetInClasses.get(id);
 
-        System.out.println(correctPacketClass);
-
         try {
-            T packetIn = (T) correctPacketClass.getDeclaredConstructor(byte[].class).newInstance(bytes);
+            T packetIn = (T) correctPacketClass.getDeclaredConstructor(ByteArrayInputStream.class).newInstance(_bais);
 
             Field[] fields = correctPacketClass.getFields();
 
@@ -65,6 +63,7 @@ public class PacketModule extends Module {
                 System.out.println("Packet field " + field.getName() + " set to " + object.toString());
             }
 
+            packetIn.onDataHandled();
 
             return packetIn;
 

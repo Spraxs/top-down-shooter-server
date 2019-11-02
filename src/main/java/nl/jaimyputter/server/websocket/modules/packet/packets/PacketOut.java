@@ -84,8 +84,6 @@ public class PacketOut {
         _baos.write((int) ((value >> 56) & 0xff));
     }
 
-    // TODO Fix encryption error
-
     public byte[] getSendableBytes() {
 
         System.out.println("Test: " + _baos.toByteArray());
