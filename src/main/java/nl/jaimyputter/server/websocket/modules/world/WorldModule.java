@@ -1,11 +1,9 @@
 package nl.jaimyputter.server.websocket.modules.world;
 
-import nl.jaimyputter.server.socket.framework.managers.IdManager;
 import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerSpawn;
 import nl.jaimyputter.server.websocket.modules.world.framework.WorldObject;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
@@ -39,7 +37,7 @@ public class WorldModule extends Module {
         playerObjects.put(player.getObjectId(), player);
 
         // Send packet to all clients of client
-        Main.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerSpawn(player));
+        //Main.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerSpawn(player));
     }
 
     public void removePlayer(Client client) {
@@ -58,7 +56,7 @@ public class WorldModule extends Module {
         playerObjects.remove(player.getObjectId());
 
         // Send packet to all clients of player
-        Main.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerSpawn(player));
+        //Main.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerSpawn(player));
     }
 
 

@@ -1,8 +1,13 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets;
 
-import nl.jaimyputter.server.websocket.modules.packet.packets.framework.Encryption;
+import com.sun.deploy.util.ArrayUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Spraxs
@@ -10,11 +15,87 @@ import java.io.ByteArrayOutputStream;
  */
 
 
-public class PacketOut {
+public abstract class PacketOut {
 
     private final ByteArrayOutputStream _baos  = new ByteArrayOutputStream();
 
-    public void writeString(String value) {
+    public short id = -1;
+
+    public abstract void onDataPrepare();
+
+    public void handlePacketData() {
+        if (id < 0) {
+            throw new RuntimeException("Packet id has not been set!");
+        }
+
+        // Set all field in correct order
+
+        Field[] fields = getClass().getFields();
+
+        Field idField = fields[fields.length - 1];
+
+        fields = new Field[getClass().getFields().length];
+
+        fields[0] = idField;
+
+        for (int i = 1; i < fields.length; i++) {
+            fields[i] = getClass().getFields()[i - 1];
+        }
+
+        for (Field field : fields) {
+            try {
+                Object value = field.get(this);
+                writeNext(field.getType(), value);
+
+                System.out.println("Packet out field " + field.getName() + " set to " + value.toString());
+
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void writeNext(Class<?> type, Object value) {
+
+        if (type.equals(String.class)) {
+            writeString((String) value);
+            return;
+        }
+
+        if (type.equals(byte.class)) {
+            writeByte((byte) value);
+            return;
+        }
+
+        if (type.equals(short.class)) {
+            writeShort((short) value);
+            return;
+        }
+
+        if (type.equals(int.class)) {
+            writeInt((int) value);
+            return;
+        }
+
+        if (type.equals(long.class)) {
+            writeLong((long) value);
+            return;
+        }
+
+        if (type.equals(float.class)) {
+            writeFloat((float) value);
+            return;
+        }
+
+        if (type.equals(double.class)) {
+            writeDouble((double) value);
+            return;
+        }
+
+        throw new RuntimeException("Value type " + type.getSimpleName() + " is not supported by packets!");
+    }
+
+    private void writeString(String value) {
         if (value != null) {
             try {
                 final byte[] byteArray = value.getBytes("UTF-8");
@@ -28,32 +109,32 @@ public class PacketOut {
         }
     }
 
-    public void writeBytes(byte[] array) {
+    private void writeBytes(byte[] array) {
         try {
             _baos.write(array);
         } catch (Exception e) {
         }
     }
 
-    public void writeByte(int value) {
+    private void writeByte(int value) {
         _baos.write(value & 0xff);
     }
 
-    public void writeShort(int value) {
+    private void writeShort(int value) {
 
         _baos.write(value & 0xff);
         _baos.write((value >> 8) & 0xff);
 
     }
 
-    public void writeInt(int value) {
+    private void writeInt(int value) {
         _baos.write(value & 0xff);
         _baos.write((value >> 8) & 0xff);
         _baos.write((value >> 16) & 0xff);
         _baos.write((value >> 24) & 0xff);
     }
 
-    public void writeLong(long value) {
+    private void writeLong(long value) {
         _baos.write((int) (value & 0xff));
         _baos.write((int) ((value >> 8) & 0xff));
         _baos.write((int) ((value >> 16) & 0xff));
@@ -64,7 +145,7 @@ public class PacketOut {
         _baos.write((int) ((value >> 56) & 0xff));
     }
 
-    public void writeFloat(float fvalue) {
+    private void writeFloat(float fvalue) {
         final int value = Float.floatToRawIntBits(fvalue);
         _baos.write(value & 0xff);
         _baos.write((value >> 8) & 0xff);
@@ -72,7 +153,7 @@ public class PacketOut {
         _baos.write((value >> 24) & 0xff);
     }
 
-    public void writeDouble(double dvalue) {
+    private void writeDouble(double dvalue) {
         final long value = Double.doubleToRawLongBits(dvalue);
         _baos.write((int) (value & 0xff));
         _baos.write((int) ((value >> 8) & 0xff));

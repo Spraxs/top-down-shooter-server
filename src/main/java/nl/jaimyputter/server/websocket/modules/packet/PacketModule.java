@@ -60,7 +60,7 @@ public class PacketModule extends Module {
                 Object object = packetIn.readNext(field.getType());
                 field.set(packetIn, object);
 
-                System.out.println("Packet field " + field.getName() + " set to " + object.toString());
+                System.out.println("Packet in field " + field.getName() + " set to " + object.toString());
             }
 
             packetIn.onDataHandled();

@@ -18,14 +18,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 import lombok.Getter;
 import lombok.Setter;
-import nl.jaimyputter.server.socket.modules.network.packets.SendablePacket;
 import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerSpawn;
-import nl.jaimyputter.server.websocket.modules.task.framework.Task;
-import nl.jaimyputter.server.websocket.modules.world.WorldModule;
-import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.Server;
 import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
@@ -97,9 +92,19 @@ public class Client extends SimpleChannelInboundHandler<Object> {
     public void channelSend(PacketOut packet) {
         if (channel.isActive())  {
 
+            // Prepare field values
+            packet.onDataPrepare();
+
+            // Write field values to input array
+            packet.handlePacketData();
+
+            // Get bytes from input array
+            byte[] bytes = packet.getSendableBytes();
+
             System.out.println("Send packet..");
 
-            channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.copiedBuffer(packet.getSendableBytes())));
+            // Send binary websocket frame
+            channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.copiedBuffer(bytes)));
         }
     }
 

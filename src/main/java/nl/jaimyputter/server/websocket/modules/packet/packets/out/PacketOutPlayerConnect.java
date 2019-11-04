@@ -1,19 +1,23 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.out;
 
-import lombok.Getter;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 
 public class PacketOutPlayerConnect extends PacketOut {
 
-    public PacketOutPlayerConnect() {
-        super();
-        writeShort(0);
+    public int level;
+    public double speed;
+    public double damage;
+    public long timeInMillis;
 
-        writeInt(5);
+    @Override
+    public void onDataPrepare() {
+        id = 0;
 
-        writeDouble(1.0d);
-        writeDouble(2.5d);
+        level = 5;
 
-        writeLong(System.currentTimeMillis());
+        speed = 1.0d;
+        damage = 2.5d;
+
+        timeInMillis = System.currentTimeMillis();
     }
 }
