@@ -25,7 +25,7 @@ public abstract class PacketOut {
 
     public void handlePacketData() {
         if (id < 0) {
-            throw new RuntimeException("Packet id has not been set!");
+            throw new RuntimeException("Packet out id has not been set!");
         }
 
         // Set all field in correct order
