@@ -4,6 +4,7 @@ import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPing;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnect;
 
 import java.io.ByteArrayInputStream;
@@ -30,12 +31,6 @@ public class PacketInPlayerConnect extends PacketIn {
 
     @Override
     public void onDataHandled() {
-        System.out.println("level: " + level);
-        System.out.println("speed: " + speed);
-        System.out.println("damage: " + damage);
-
-        System.out.println("Time: " + (System.currentTimeMillis() - timeSendMillis));
-
-        Main.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerConnect());
+        Main.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPing());
     }
 }

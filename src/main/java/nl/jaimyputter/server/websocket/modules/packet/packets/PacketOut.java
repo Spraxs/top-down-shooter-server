@@ -1,13 +1,7 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets;
 
-import com.sun.deploy.util.ArrayUtil;
-
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Created by Spraxs
@@ -46,8 +40,6 @@ public abstract class PacketOut {
             try {
                 Object value = field.get(this);
                 writeNext(field.getType(), value);
-
-                System.out.println("Packet out field " + field.getName() + " set to " + value.toString());
 
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
