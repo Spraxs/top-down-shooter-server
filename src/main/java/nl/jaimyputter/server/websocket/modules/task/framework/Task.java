@@ -14,7 +14,6 @@ public abstract class Task implements Runnable {
 
     private @Getter Thread thread;
 
-
     public Task() {
         id = TaskModule.Instance.nextId();
     }

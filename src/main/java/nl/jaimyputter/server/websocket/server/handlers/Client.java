@@ -86,7 +86,7 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void channelReadComplete(ChannelHandlerContext channelHandlerContext) {
-        channel.flush();
+        //channel.flush();
     }
 
     public void channelSend(PacketOut packet) {
