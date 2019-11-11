@@ -43,7 +43,7 @@ public class PacketModule extends Module {
         Server.getOnlineClients().stream().filter(client -> client != filteredClient).forEach(client -> client.channelSend(packet));
     }
 
-    public <T extends PacketIn> T getIncomingPacket(byte[] bytes) {
+    public <T extends PacketIn> T getIncomingPacket(Client client, byte[] bytes) {
 
         ByteArrayInputStream _bais = new ByteArrayInputStream(bytes);
 
@@ -52,7 +52,7 @@ public class PacketModule extends Module {
         Class<? extends PacketIn> correctPacketClass = packetInClasses.get(id);
 
         try {
-            T packetIn = (T) correctPacketClass.getDeclaredConstructor(ByteArrayInputStream.class).newInstance(_bais);
+            T packetIn = (T) correctPacketClass.getDeclaredConstructor(Client.class, ByteArrayInputStream.class).newInstance(client, _bais);
 
             Field[] fields = correctPacketClass.getFields();
 

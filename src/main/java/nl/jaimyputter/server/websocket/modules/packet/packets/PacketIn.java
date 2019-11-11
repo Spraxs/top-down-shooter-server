@@ -1,5 +1,7 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets;
 
+import nl.jaimyputter.server.websocket.server.handlers.Client;
+
 import java.io.ByteArrayInputStream;
 
 /**
@@ -11,9 +13,11 @@ import java.io.ByteArrayInputStream;
 public abstract class PacketIn {
 
     private final ByteArrayInputStream _bais;
+    protected final Client client;
 
-    public PacketIn(ByteArrayInputStream bais) {
+    public PacketIn(Client client, ByteArrayInputStream bais) {
         _bais = bais;
+        this.client = client;
     }
 
     public abstract void onDataHandled();

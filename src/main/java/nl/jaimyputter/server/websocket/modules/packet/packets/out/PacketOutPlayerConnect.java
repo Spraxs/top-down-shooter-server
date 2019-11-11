@@ -4,20 +4,20 @@ import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 
 public class PacketOutPlayerConnect extends PacketOut {
 
-    public int level;
-    public double speed;
-    public double damage;
-    public long timeInMillis;
+    public long playerId;
+    public String playerName;
+    public double posX;
+    public double posY;
+
+    public PacketOutPlayerConnect(long playerId, String playerName, double posX, double posY) {
+        this.playerId = playerId;
+        this.playerName = playerName;
+        this.posX = posX;
+        this.posY = posY;
+    }
 
     @Override
     public void onDataPrepare() {
         id = 0; // TODO set this value with annotation
-
-        level = 5;
-
-        speed = 1.0d;
-        damage = 2.5d;
-
-        timeInMillis = System.currentTimeMillis();
     }
 }

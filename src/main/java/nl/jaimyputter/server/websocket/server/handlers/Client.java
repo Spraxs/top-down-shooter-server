@@ -37,6 +37,7 @@ public class Client extends SimpleChannelInboundHandler<Object> {
     public Client() {
         client = this;
         packetModule = Main.byModule(PacketModule.class);
+        accountName = "Noob";
     }
 
     private static final String WEBSOCKET_PATH = "/websocket";
@@ -136,7 +137,7 @@ public class Client extends SimpleChannelInboundHandler<Object> {
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
 
-            packetModule.getIncomingPacket(bytes);
+            packetModule.getIncomingPacket(this, bytes);
 
             return;
         }
