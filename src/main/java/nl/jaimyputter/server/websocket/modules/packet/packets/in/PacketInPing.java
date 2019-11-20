@@ -20,7 +20,6 @@ public class PacketInPing extends PacketIn {
 
     public long timeInMillis;
 
-
     @Override
     public void onDataHandled() {
         System.out.println("Delay: " + (System.currentTimeMillis() - timeInMillis) + " ms");
