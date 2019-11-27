@@ -46,6 +46,8 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
     private WebSocketServerHandshaker handshaker;
 
+    private @Getter @Setter long playerId;
+
     private Channel channel;
     private String ip;
     private @Getter @Setter String accountName;

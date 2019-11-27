@@ -19,5 +19,7 @@ public class PacketOutPlayerConnect extends PacketOut {
     @Override
     public void onDataPrepare() {
         id = 0; // TODO set this value with annotation
+
+
     }
 }
