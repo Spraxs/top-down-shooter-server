@@ -46,4 +46,3 @@ public class PacketInPlayerConnect extends PacketIn {
                 .forEach(c -> client.channelSend(new PacketOutPlayerConnect(c.getPlayerId(), c.getAccountName(), x, y)));
     }
 }
- 
