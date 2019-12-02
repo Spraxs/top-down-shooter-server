@@ -9,10 +9,10 @@ import lombok.Data;
 @Data
 public class Location {
 
-    float x;
-    float y;
+    double x;
+    double y;
 
-    public Location(float x, float y) {
+    public Location(double x, double y) {
         this.x = x;
         this.y = y;
     }

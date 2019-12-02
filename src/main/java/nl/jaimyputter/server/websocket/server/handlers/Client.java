@@ -21,6 +21,7 @@ import lombok.Setter;
 import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
+import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.Server;
 import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
@@ -35,28 +36,25 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 public class Client extends SimpleChannelInboundHandler<Object> {
 
     public Client() {
-        client = this;
         packetModule = Main.byModule(PacketModule.class);
         accountName = "Noob";
     }
 
     private static final String WEBSOCKET_PATH = "/websocket";
 
-    private PacketModule packetModule;
+    private @Getter PacketModule packetModule;
 
     private WebSocketServerHandshaker handshaker;
-
-    private @Getter @Setter long playerId;
 
     private Channel channel;
     private String ip;
     private @Getter @Setter String accountName;
-    private Client client;
+
+    private @Getter @Setter
+    Player player;
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) { // connect client
-        Server.addClient(this);
-
         channel = ctx.channel();
         ip = channel.remoteAddress().toString();
         ip = ip.substring(1, ip.lastIndexOf(':')); // Trim out /127.0.0.1:12345
@@ -68,6 +66,8 @@ public class Client extends SimpleChannelInboundHandler<Object> {
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) { // disconnect client
         Server.removeClient(this);
+
+        // TODO Remove player from clients
 
         System.out.println("Client disconnected");
     }

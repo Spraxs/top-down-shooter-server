@@ -94,7 +94,7 @@ public final class Main {
                     Channel ch = b.bind(PORT).sync().channel();
 
                     System.out.println("Open your web browser and navigate to " +
-                            (SSL? "https" : "http") + "://127.0.0.1:" + PORT + '/');
+                            (SSL ? "https" : "http") + "://127.0.0.1:" + PORT + '/');
 
                     ch.closeFuture().sync();
                 } catch (InterruptedException e) {
@@ -108,6 +108,8 @@ public final class Main {
                     bossGroup.shutdownGracefully();
                     workerGroup.shutdownGracefully();
                 }
+
+                disableModules();
             }
         }.runNewThread("server");
     }

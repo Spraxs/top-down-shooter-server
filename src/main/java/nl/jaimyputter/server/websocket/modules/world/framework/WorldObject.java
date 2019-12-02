@@ -13,7 +13,6 @@ import nl.jaimyputter.server.websocket.framework.managers.IdManager;
 
 public class WorldObject {
 
-
     private @Getter final long objectId = IdManager.getNextId();
     private @Getter final long spawnTime = System.currentTimeMillis();
     private @Getter @Setter Location location = new Location(0, 0);
@@ -24,7 +23,7 @@ public class WorldObject {
      * @param y the Y coordinate
      * @return distance between object and given x, y, z.
      */
-    public double calculateDistance(float x, float y)
+    public double calculateDistance(double x, double y)
     {
         return Math.pow(x - location.getX(), 2) + Math.pow(y - location.getY(), 2);
     }
