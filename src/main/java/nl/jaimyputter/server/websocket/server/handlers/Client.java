@@ -21,6 +21,7 @@ import lombok.Setter;
 import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
+import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.Server;
 import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
@@ -37,12 +38,15 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
     public Client() {
         packetModule = Main.byModule(PacketModule.class);
+        worldModule = Main.byModule(WorldModule.class);
+
         accountName = "Noob";
     }
 
     private static final String WEBSOCKET_PATH = "/websocket";
 
-    private @Getter PacketModule packetModule;
+    private final @Getter PacketModule packetModule;
+    private final @Getter WorldModule worldModule;
 
     private WebSocketServerHandshaker handshaker;
 
@@ -67,7 +71,7 @@ public class Client extends SimpleChannelInboundHandler<Object> {
     public void handlerRemoved(ChannelHandlerContext ctx) { // disconnect client
         Server.removeClient(this);
 
-        // TODO Remove player from clients
+        worldModule.handlePlayerDisconnect(this);
 
         System.out.println("Client disconnected");
     }
@@ -103,8 +107,6 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
             // Get bytes from input array
             byte[] bytes = packet.getSendableBytes();
-
-            System.out.println("Send packet..");
 
             // Send binary websocket frame
             channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.copiedBuffer(bytes)));

@@ -21,13 +21,6 @@ public class PacketInPlayerDisconnect extends PacketIn {
 
     @Override
     public void onDataHandled() {
-        WorldModule worldModule = Main.byModule(WorldModule.class);
 
-        Player player = client.getPlayer();
-
-        player.getLocation().setX(posX);
-        player.getLocation().setY(posY);
-
-        worldModule.removePlayer(player); // Remove player & send packets
     }
 }

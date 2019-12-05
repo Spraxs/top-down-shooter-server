@@ -37,6 +37,18 @@ public class WorldModule extends Module {
     public void onStart() {
     }
 
+    public void handlePlayerDisconnect(Client client) {
+
+        Player player = client.getPlayer();
+
+        if (player == null) {
+            System.out.println("Player is null on disconnect.");
+            return;
+        }
+
+        removePlayer(player); // Remove player & send packets
+    }
+
     public Player createPlayer(Client client, String name, double posX, double posY) {
         Player player = new Player(client, name);
 
