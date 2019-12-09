@@ -13,11 +13,15 @@ public class PacketOutPlayerPositionChange extends PacketOut {
 
     private final Player player;
 
+    public long playerId;
+
     public double posX;
     public double posY;
 
     public PacketOutPlayerPositionChange(Player player) {
         this.player = player;
+
+        playerId = player.getObjectId();
     }
 
     @Override

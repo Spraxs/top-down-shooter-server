@@ -29,10 +29,10 @@ public class PacketInPlayerPositionChange extends PacketIn {
     public void onDataHandled() {
         Location location = client.getPlayer().getLocation();
 
+        // TODO Call event and check if cancelled
+
         location.setX(posX);
         location.setY(posY);
-
-        // TODO Call event and check if cancelled
 
         Main.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(client.getPlayer()), client);
 
