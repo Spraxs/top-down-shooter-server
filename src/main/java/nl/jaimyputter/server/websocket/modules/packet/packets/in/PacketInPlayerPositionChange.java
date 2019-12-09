@@ -1,11 +1,11 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.in;
 
-import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerPositionChange;
 import nl.jaimyputter.server.websocket.modules.world.framework.Location;
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
 import java.io.ByteArrayInputStream;
@@ -34,7 +34,7 @@ public class PacketInPlayerPositionChange extends PacketIn {
         location.setX(posX);
         location.setY(posY);
 
-        Main.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(client.getPlayer()), client);
+        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(client.getPlayer()), client);
 
 
     }

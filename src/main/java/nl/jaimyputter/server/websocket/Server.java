@@ -1,19 +1,3 @@
-/*
- * Copyright 2014 The Netty Project
- *
- * The Netty Project licenses this file to you under the Apache License,
- * version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 package nl.jaimyputter.server.websocket;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -27,39 +11,75 @@ import lombok.Getter;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.modules.packet.packets.framework.Encryption;
 import nl.jaimyputter.server.websocket.modules.task.framework.Task;
+import nl.jaimyputter.server.websocket.server.handlers.Client;
 import nl.jaimyputter.server.websocket.server.initializer.ClientInitializer;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
 
 import javax.net.ssl.SSLException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.cert.CertificateException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 /**
- * A Benchmark application for websocket which is served at:
- *
- * http://localhost:8080/websocket
- *
- * Open your browser at http://localhost:8080/, then the benchmark page will be loaded and a Web Socket connection will
- * be made automatically.
+ * Created by Spraxs
+ * Date: 10/29/2019
  */
-public final class Main {
+
+public final class Server {
 
     public static final boolean SSL = System.getProperty("ssl") != null;
     public static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
 
-    private static Main Instance;
+    private static Server Instance;
 
     private @Getter ConcurrentHashMap<Class, Module> modules = new ConcurrentHashMap<>();
 
-    private Main() {
-        Instance = this;
+    private @Getter Logger logger;
 
+    public static void main(String[] args) {
+        new Server();
+    }
+
+    public Server() {
+        Instance = this;
         onStart();
         setupServer();
     }
+
+    private void onStart() {
+
+        logger = Logger.getLogger("server");
+
+        Encryption.init();
+
+        initModules();
+
+        enableModulesWithPriority();
+    }
+
+    private static List<Client> ONLINE_CLIENTS = new CopyOnWriteArrayList<>();
+
+    public static Collection<Client> getOnlineClients() {
+        return ONLINE_CLIENTS;
+    }
+
+    public static void addClient(Client client) {
+        if (!ONLINE_CLIENTS.contains(client)) {
+            ONLINE_CLIENTS.add(client);
+        }
+    }
+
+    public static void removeClient(Client client) {
+        ONLINE_CLIENTS.remove(client);
+    }
+
+
 
     public void setupServer() {
         new Task() {
@@ -114,17 +134,10 @@ public final class Main {
         }.runNewThread("server");
     }
 
-    private void onStart() {
 
-        Encryption.init();
-
-        initModules();
-
-        enableModulesWithPriority();
-    }
-
-    public static void main(String[] args) {
-        new Main();
+    // Disables all modules
+    private void disableModules() {
+        modules.values().stream().sorted(Comparator.comparing(Module::getPriority)).forEach(Module::endModule);
     }
 
     // Enabled modules in order of Priority
@@ -148,21 +161,16 @@ public final class Main {
         }, getClass().getPackage().getName());
     }
 
-    // Disables all modules
-    private void disableModules() {
-        modules.values().stream().sorted(Comparator.comparing(Module::getPriority)).forEach(Module::endModule);
-    }
-
     /**
-     * Gets the plugin instance.
+     * Gets the server instance.
      *
-     * @return  the RadiationPlugin
+     * @return  the Server
      */
-    public static Main getInstance() {
+    public static Server getServer() {
         return Instance;
     }
 
     public static <T extends Module> T byModule(Class<T> moduleClass) {
-        return ReflectionUtil.getModule(moduleClass, getInstance().getModules());
+        return ReflectionUtil.getModule(moduleClass, getServer().getModules());
     }
 }

@@ -1,16 +1,13 @@
 package nl.jaimyputter.server.websocket.modules.world;
 
-import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnect;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnectOwn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDisconnect;
 import nl.jaimyputter.server.websocket.modules.world.framework.Location;
 import nl.jaimyputter.server.websocket.modules.world.framework.WorldObject;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
-import nl.jaimyputter.server.websocket.server.Server;
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
 import java.util.Map;
@@ -32,7 +29,7 @@ public class WorldModule extends Module {
     private final Map<Long, Player> playerObjects = new ConcurrentHashMap<>();
     private final Map<Long, WorldObject> gameObjects = new ConcurrentHashMap<>();
 
-    private final PacketModule packetModule = Main.byModule(PacketModule.class);
+    private final PacketModule packetModule = Server.byModule(PacketModule.class);
 
     public void onStart() {
     }

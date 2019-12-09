@@ -5,10 +5,9 @@ import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
-import nl.jaimyputter.server.websocket.server.Server;
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
-import org.reflections.Reflections;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;

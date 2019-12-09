@@ -18,12 +18,11 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 import lombok.Getter;
 import lombok.Setter;
-import nl.jaimyputter.server.websocket.Main;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
-import nl.jaimyputter.server.websocket.server.Server;
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
@@ -37,8 +36,8 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 public class Client extends SimpleChannelInboundHandler<Object> {
 
     public Client() {
-        packetModule = Main.byModule(PacketModule.class);
-        worldModule = Main.byModule(WorldModule.class);
+        packetModule = Server.byModule(PacketModule.class);
+        worldModule = Server.byModule(WorldModule.class);
 
         accountName = "Noob";
     }
@@ -207,7 +206,7 @@ public class Client extends SimpleChannelInboundHandler<Object> {
 
     private static String getWebSocketLocation(FullHttpRequest req) {
         String location =  req.headers().get(HOST) + WEBSOCKET_PATH;
-        if (Main.SSL) {
+        if (Server.SSL) {
             return "wss://" + location;
         } else {
             return "ws://" + location;

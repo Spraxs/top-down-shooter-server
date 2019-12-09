@@ -1,7 +1,5 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.in;
 
-import nl.jaimyputter.server.websocket.Main;
-import nl.jaimyputter.server.websocket.framework.managers.IdManager;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
@@ -9,7 +7,7 @@ import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlaye
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnectOwn;
 import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
-import nl.jaimyputter.server.websocket.server.Server;
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
 import java.io.ByteArrayInputStream;
@@ -33,7 +31,7 @@ public class PacketInPlayerConnect extends PacketIn {
         Server.addClient(client);
         client.setAccountName(playerName); // Set client name
 
-        WorldModule worldModule = Main.byModule(WorldModule.class);
+        WorldModule worldModule = Server.byModule(WorldModule.class);
 
         double x = 0.0D;
         double y = 0.0D;
@@ -45,7 +43,7 @@ public class PacketInPlayerConnect extends PacketIn {
         // Send packet to all clients except yourself
         client.channelSend(new PacketOutPlayerConnectOwn(player.getObjectId(), client.getAccountName(), player.getLocation().getX(), player.getLocation().getY()));
 
-        Main.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerConnect(player.getObjectId(),
+        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerConnect(player.getObjectId(),
                 client.getAccountName(), player.getLocation().getX(), player.getLocation().getY()), client);
 
         Server.getOnlineClients().forEach(c -> System.out.println(c.getPlayer().getObjectId()));

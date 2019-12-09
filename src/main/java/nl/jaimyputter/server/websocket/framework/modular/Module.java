@@ -1,11 +1,8 @@
 package nl.jaimyputter.server.websocket.framework.modular;
 
 import lombok.Getter;
-import nl.jaimyputter.server.websocket.Main;
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
-
-import javax.net.ssl.SSLException;
-import java.security.cert.CertificateException;
 
 public abstract class Module {
 
@@ -37,7 +34,7 @@ public abstract class Module {
     public void initModelePriority() {
         boolean error = false;
         try {
-            priority = ReflectionUtil.getClassModulePriorityAnnotation(Main.byModule(this.getClass()).getClass()).value();
+            priority = ReflectionUtil.getClassModulePriorityAnnotation(Server.byModule(this.getClass()).getClass()).value();
         } catch (NullPointerException e) {
             throw new NullPointerException("No ModulePriority annotation set in " + name + " module.");
         }
