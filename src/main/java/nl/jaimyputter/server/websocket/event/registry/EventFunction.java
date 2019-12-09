@@ -6,5 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.METHOD})
-public @interface Event {
+public @interface EventFunction {
+    int priority() default 0;
 }
