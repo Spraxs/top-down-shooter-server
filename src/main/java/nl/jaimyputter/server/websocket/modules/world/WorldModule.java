@@ -1,5 +1,6 @@
 package nl.jaimyputter.server.websocket.modules.world;
 
+import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
@@ -48,9 +49,13 @@ public class WorldModule extends Module {
     }
 
     public Player createPlayer(Client client, String name, double posX, double posY) {
-        Player player = new Player(client, name);
 
-        player.setTransform(new Transform(new Vector2((float) posX, (float) posY)));
+        Transform transform = new Transform(new Vector2((float) posX, (float) posY));
+
+        // TODO Player needs BoxCollider and BoxCollider needs player
+        BoxCollider2 boxCollider2 = new BoxCollider2()
+
+        Player player = new Player(transform, client, name);
 
         playerObjects.put(player.getObjectId(), player);
 

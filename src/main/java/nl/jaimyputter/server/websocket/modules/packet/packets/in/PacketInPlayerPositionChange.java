@@ -1,5 +1,6 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.in;
 
+import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
@@ -27,12 +28,12 @@ public class PacketInPlayerPositionChange extends PacketIn {
 
     @Override
     public void onDataHandled() {
-        Transform location = client.getPlayer().getLocation();
+        Vector2 location = client.getPlayer().getTransform().getPosition();
 
         // TODO Call event and check if cancelled
 
-        location.setX(posX);
-        location.setY(posY);
+        location.setX((float)posX);
+        location.setY((float) posY);
 
         Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(client.getPlayer()), client);
 
