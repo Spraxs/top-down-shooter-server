@@ -2,7 +2,9 @@ package nl.jaimyputter.server.websocket.modules.world.framework.creatures;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
 import nl.jaimyputter.server.websocket.modules.world.framework.WorldObject;
+import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 
 /**
  * Created by Spraxs
@@ -19,7 +21,8 @@ public class Creature extends WorldObject {
     private @Getter @Setter boolean alive = true;
     private @Getter @Setter WorldObject target;
 
-    public Creature() {
+    public Creature(Transform transform, BoxCollider2 boxCollider2) {
+        super(transform, boxCollider2);
     }
 
 

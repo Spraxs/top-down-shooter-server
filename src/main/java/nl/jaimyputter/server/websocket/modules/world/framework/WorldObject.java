@@ -2,9 +2,12 @@ package nl.jaimyputter.server.websocket.modules.world.framework;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
+import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
+import nl.jaimyputter.server.websocket.framework.managers.IdManager;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Creature;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
-import nl.jaimyputter.server.websocket.framework.managers.IdManager;
+import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 
 /**
  * Created by Spraxs
@@ -15,7 +18,26 @@ public class WorldObject {
 
     private @Getter final long objectId = IdManager.getNextId();
     private @Getter final long spawnTime = System.currentTimeMillis();
-    private @Getter @Setter Location location = new Location(0, 0);
+    private @Getter @Setter Transform transform;
+
+    private BoxCollider2 boxCollider2;
+
+    public WorldObject(Transform transform) {
+        this.transform = transform;
+    }
+
+    public WorldObject(Transform transform, BoxCollider2 boxCollider2) {
+        this.transform = transform;
+        this.boxCollider2 = boxCollider2;
+    }
+
+    public void setPosition(Vector2 position) {
+        transform.setPosition(position);
+
+        if (boxCollider2 != null) {
+            boxCollider2.updatePosition();
+        }
+    }
 
     /**
      * Calculates distance between this GameObject and given x, y.
@@ -25,7 +47,7 @@ public class WorldObject {
      */
     public double calculateDistance(double x, double y)
     {
-        return Math.pow(x - location.getX(), 2) + Math.pow(y - location.getY(), 2);
+        return Math.pow(x - transform.getPosition().getX(), 2) + Math.pow(y - transform.getPosition().getY(), 2);
     }
 
     /**
@@ -35,7 +57,7 @@ public class WorldObject {
      */
     public double calculateDistance(WorldObject object)
     {
-        return calculateDistance(object.getLocation().getX(), object.getLocation().getY());
+        return calculateDistance(object.getTransform().getPosition().getX(), object.getTransform().getPosition().getY());
     }
 
     /**

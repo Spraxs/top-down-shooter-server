@@ -1,10 +1,11 @@
 package nl.jaimyputter.server.websocket.modules.world;
 
+import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDisconnect;
-import nl.jaimyputter.server.websocket.modules.world.framework.Location;
+import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 import nl.jaimyputter.server.websocket.modules.world.framework.WorldObject;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.Server;
@@ -49,7 +50,7 @@ public class WorldModule extends Module {
     public Player createPlayer(Client client, String name, double posX, double posY) {
         Player player = new Player(client, name);
 
-        player.setLocation(new Location(posX, posY));
+        player.setTransform(new Transform(new Vector2((float) posX, (float) posY)));
 
         playerObjects.put(player.getObjectId(), player);
 

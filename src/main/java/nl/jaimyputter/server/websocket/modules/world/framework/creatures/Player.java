@@ -1,7 +1,9 @@
 package nl.jaimyputter.server.websocket.modules.world.framework.creatures;
 
 import lombok.Getter;
+import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
+import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
 /**
@@ -14,8 +16,8 @@ public class Player extends Creature {
     private @Getter final Client client;
     private @Getter final String name;
 
-    public Player(Client client, String name)
-    {
+    public Player(Transform transform, BoxCollider2 boxCollider2, Client client, String name) {
+        super(transform, boxCollider2);
         this.client = client;
         this.name = name;
     }

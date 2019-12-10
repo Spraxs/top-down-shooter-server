@@ -16,6 +16,8 @@ import nl.jaimyputter.server.websocket.server.initializer.ClientInitializer;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
 
 import javax.net.ssl.SSLException;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
@@ -50,6 +52,7 @@ public final class Server {
         Instance = this;
         onStart();
         setupServer();
+
     }
 
     private void onStart() {

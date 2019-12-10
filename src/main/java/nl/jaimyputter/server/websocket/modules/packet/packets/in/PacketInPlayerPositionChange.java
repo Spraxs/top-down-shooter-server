@@ -4,7 +4,7 @@ import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerPositionChange;
-import nl.jaimyputter.server.websocket.modules.world.framework.Location;
+import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
@@ -27,7 +27,7 @@ public class PacketInPlayerPositionChange extends PacketIn {
 
     @Override
     public void onDataHandled() {
-        Location location = client.getPlayer().getLocation();
+        Transform location = client.getPlayer().getLocation();
 
         // TODO Call event and check if cancelled
 
