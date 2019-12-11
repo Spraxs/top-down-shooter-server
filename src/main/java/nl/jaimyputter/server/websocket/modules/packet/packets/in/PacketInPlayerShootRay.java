@@ -4,6 +4,7 @@ import nl.jaimyputter.server.websocket.framework.geometry.GeometryHelper;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDamageOwn;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
@@ -36,10 +37,12 @@ public class PacketInPlayerShootRay extends PacketIn {
 
         Player hitPlayer = GeometryHelper.rayCastHitPlayer(rayPosition, rayDirection, player);
 
-        if (hitPlayer == null) {
-            System.out.println("No hit!");
-        } else {
-            System.out.println("Hit!");
+        if (hitPlayer != null) {
+            float damage = 5.0f;
+
+            hitPlayer.setHealth(hitPlayer.getHealth() - damage);
+
+            hitPlayer.channelSend(new PacketOutPlayerDamageOwn(damage, hitPlayer.getHealth(), rayPosition));
         }
     }
 }

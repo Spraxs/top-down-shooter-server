@@ -39,12 +39,15 @@ public class PacketInPlayerPositionChange extends PacketIn {
 
         player.setPosition(newPos);
 
+        /* Debug player hit box points to his client
+
         player.channelSend(new PacketOutDebugCollider(
                 player.getBoxCollider2().getPointA(),
                 player.getBoxCollider2().getPointB(),
                 player.getBoxCollider2().getPointC(),
                 player.getBoxCollider2().getPointD())
         );
+         */
 
         Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(player), client);
     }
