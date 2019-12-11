@@ -1,12 +1,13 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.in;
 
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutDebugCollider;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerPositionChange;
-import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
-import nl.jaimyputter.server.websocket.Server;
+import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
 import java.io.ByteArrayInputStream;
@@ -28,15 +29,23 @@ public class PacketInPlayerPositionChange extends PacketIn {
 
     @Override
     public void onDataHandled() {
-        Vector2 location = client.getPlayer().getTransform().getPosition();
+
+
+        Vector2 newPos = new Vector2((float) posX, (float) posY);
 
         // TODO Call event and check if cancelled
 
-        location.setX((float)posX);
-        location.setY((float) posY);
+        Player player = client.getPlayer();
 
-        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(client.getPlayer()), client);
+        player.setPosition(newPos);
 
+        player.channelSend(new PacketOutDebugCollider(
+                player.getBoxCollider2().getPointA(),
+                player.getBoxCollider2().getPointB(),
+                player.getBoxCollider2().getPointC(),
+                player.getBoxCollider2().getPointD())
+        );
 
+        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(player), client);
     }
 }

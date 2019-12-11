@@ -12,6 +12,7 @@ import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,29 +49,17 @@ public class WorldModule extends Module {
         removePlayer(player); // Remove player & send packets
     }
 
-    public Player createPlayer(Client client, String name, double posX, double posY) {
+    public Player createPlayer(Client client, String name, Vector2 position, Vector2 colliderOffset, Vector2 colliderSize) {
 
-        Transform transform = new Transform(new Vector2((float) posX, (float) posY));
+        final Transform transform = new Transform(position);
 
-        // TODO Player needs BoxCollider and BoxCollider needs player
-        BoxCollider2 boxCollider2 = new BoxCollider2()
+        final BoxCollider2 boxCollider2 = new BoxCollider2(transform, colliderOffset, colliderSize);
 
-        Player player = new Player(transform, client, name);
+        final Player player = new Player(transform, boxCollider2, client, name);
 
         playerObjects.put(player.getObjectId(), player);
 
         return player;
-    }
-
-    public void removePlayer(Client client) {
-
-        Optional<Player> optionalPlayer = playerObjects.values().stream().filter(player -> player.getClient().equals(client)).findFirst();
-
-        if (optionalPlayer.isPresent()) {
-            removePlayer(optionalPlayer.get());
-        } else {
-            System.out.println("Client " + client.getAccountName() + " has no player to remove.");
-        }
     }
 
     public Optional<Player> getOptionalPlayer(long id) {
@@ -87,5 +76,9 @@ public class WorldModule extends Module {
 
         // Send packet to all clients of player
         packetModule.sendPacketToAllClients(new PacketOutPlayerDisconnect(player.getObjectId()));
+    }
+
+    public Collection<Player> getAllPlayers() {
+        return playerObjects.values();
     }
 }

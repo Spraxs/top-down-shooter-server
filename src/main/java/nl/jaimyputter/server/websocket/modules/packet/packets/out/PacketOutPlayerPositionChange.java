@@ -1,5 +1,6 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.out;
 
+import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
@@ -28,9 +29,9 @@ public class PacketOutPlayerPositionChange extends PacketOut {
     public void onDataPrepare() {
         id = 4;
 
-        Transform location = player.getLocation();
+        Vector2 position = player.getTransform().getPosition();
 
-        posX = location.getX();
-        posY = location.getY();
+        posX = position.getX();
+        posY = position.getY();
     }
 }

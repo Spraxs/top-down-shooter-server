@@ -5,6 +5,7 @@ import lombok.Setter;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.framework.managers.IdManager;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerPositionChange;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Creature;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
@@ -20,7 +21,7 @@ public class WorldObject {
     private @Getter final long spawnTime = System.currentTimeMillis();
     private @Getter @Setter Transform transform;
 
-    private BoxCollider2 boxCollider2;
+    private @Getter BoxCollider2 boxCollider2;
 
     public WorldObject(Transform transform) {
         this.transform = transform;
@@ -35,7 +36,7 @@ public class WorldObject {
         transform.setPosition(position);
 
         if (boxCollider2 != null) {
-            boxCollider2.updatePosition();
+            boxCollider2.updatePosition(position);
         }
     }
 

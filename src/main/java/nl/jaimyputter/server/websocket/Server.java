@@ -7,6 +7,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import lombok.Getter;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.modules.packet.packets.framework.Encryption;
@@ -16,8 +21,6 @@ import nl.jaimyputter.server.websocket.server.initializer.ClientInitializer;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
 
 import javax.net.ssl.SSLException;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
@@ -46,13 +49,13 @@ public final class Server {
 
     public static void main(String[] args) {
         new Server();
+
     }
 
     public Server() {
         Instance = this;
         onStart();
         setupServer();
-
     }
 
     private void onStart() {
@@ -101,6 +104,7 @@ public final class Server {
 
                     try {
                         sslCtx = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
+
                     } catch (SSLException e) {
                         e.printStackTrace();
                     }
