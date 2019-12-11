@@ -1,10 +1,14 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.in;
 
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.framework.geometry.GeometryHelper;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
+import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDamageOwn;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerShootRay;
+import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
@@ -24,6 +28,11 @@ public class PacketInPlayerShootRay extends PacketIn {
     public double rayDirectionX;
     public double rayDirectionY;
 
+    public double rayEndPositionX;
+    public double rayEndPositionY;
+
+    public byte hit;
+
     public PacketInPlayerShootRay(Client client, ByteArrayInputStream bais) {
         super(client, bais);
     }
@@ -34,6 +43,9 @@ public class PacketInPlayerShootRay extends PacketIn {
 
         Vector2 rayPosition = new Vector2((float) rayPositionX, (float) rayPositionY);
         Vector2 rayDirection = new Vector2((float) rayDirectionX, (float) rayDirectionY);
+        Vector2 rayEndPosition = new Vector2((float) rayEndPositionX, (float) rayEndPositionY);
+
+        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerShootRay(player.getObjectId(), rayPosition, rayEndPosition, hit), client);
 
         Player hitPlayer = GeometryHelper.rayCastHitPlayer(rayPosition, rayDirection, player);
 
@@ -42,7 +54,7 @@ public class PacketInPlayerShootRay extends PacketIn {
 
             hitPlayer.setHealth(hitPlayer.getHealth() - damage);
 
-            hitPlayer.channelSend(new PacketOutPlayerDamageOwn(damage, hitPlayer.getHealth(), rayPosition));
+            hitPlayer.channelSend(new PacketOutPlayerDamageOwn(damage, hitPlayer.getHealth(), rayDirection));
         }
     }
 }

@@ -29,7 +29,7 @@ public abstract class PacketIn {
         }
 
         if (type.equals(byte.class)) {
-            return readByte();
+            return (byte) readByte();
         }
 
         if (type.equals(short.class)) {

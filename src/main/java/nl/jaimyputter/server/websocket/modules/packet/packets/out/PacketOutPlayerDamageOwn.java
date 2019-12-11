@@ -13,15 +13,15 @@ public class PacketOutPlayerDamageOwn extends PacketOut {
     public double damage;
     public double playerHealth;
 
-    public double damagePositionX;
-    public double damagePositionY;
+    public double damageDirectionX;
+    public double damageDirectionY;
 
-    public PacketOutPlayerDamageOwn(float damage, float playerHealth, Vector2 damagePosition) {
+    public PacketOutPlayerDamageOwn(float damage, float playerHealth, Vector2 damageDirection) {
         this.damage = damage;
         this.playerHealth = playerHealth;
 
-        this.damagePositionX = damagePosition.getX();
-        this.damagePositionY = damagePosition.getY();
+        this.damageDirectionX = damageDirection.getX();
+        this.damageDirectionY = damageDirection.getY();
     }
 
     @Override

@@ -49,6 +49,9 @@ public class PacketInPlayerPositionChange extends PacketIn {
         );
          */
 
-        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(player), client);
+        long playerId = player.getObjectId();
+
+
+        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerPositionChange(playerId, newPos), client);
     }
 }
