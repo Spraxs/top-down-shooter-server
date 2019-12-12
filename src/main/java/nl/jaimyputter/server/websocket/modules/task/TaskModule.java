@@ -14,6 +14,8 @@ import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 @ModulePriority(100)
 public class TaskModule extends Module {
 
+    // TODO Create task thread
+
     private @Getter ConcurrentSet<Task> tasks = new ConcurrentSet<>();
 
     private @Getter int lastTaskId = 0;

@@ -6,6 +6,7 @@ import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDeath;
+import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 import nl.jaimyputter.server.websocket.modules.world.framework.WorldObject;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 
@@ -17,7 +18,6 @@ import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 public class Creature extends WorldObject {
 
     private static final int BASE_HEALTH = 100;
-    private static final float LEVEL_HP_MODIFIER = 1.1f;
 
     private @Getter int level = 1;
     private @Getter float health = BASE_HEALTH;
@@ -29,14 +29,17 @@ public class Creature extends WorldObject {
     }
 
 
-    public void setLevel(int level)
-    {
+    public void setLevel(int level) {
         this.level = level;
-        calculateHP();
+    }
+
+    public synchronized void restoreHealth() {
+        health = BASE_HEALTH;
     }
 
     public synchronized void setHealth(float value) {
-        if (health < 1) {
+
+        if (value < 1) {
             health = 0;
             if (alive)
             {
@@ -48,25 +51,11 @@ public class Creature extends WorldObject {
         }
     }
 
-    private void calculateHP()
-    {
-        final float hpModifier = level * LEVEL_HP_MODIFIER;
-        health = (BASE_HEALTH + (hpModifier));
-        // TODO: If player - Send HP status update to client.
-    }
-
     public void onDeath()
     {
         // TODO: Send death animation.
 
-        if (this instanceof Player) {
-            Player player = (Player) this;
 
-            // Send player death to all online clients
-            Server.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerDeath(player.getObjectId(), getTransform().getPosition()));
-        } else {
-            // TODO: Send create death packet
-        }
     }
 
     @Override
