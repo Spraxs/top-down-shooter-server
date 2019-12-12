@@ -2,7 +2,10 @@ package nl.jaimyputter.server.websocket.modules.world.framework.creatures;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
+import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDeath;
 import nl.jaimyputter.server.websocket.modules.world.framework.WorldObject;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 
@@ -55,6 +58,15 @@ public class Creature extends WorldObject {
     public void onDeath()
     {
         // TODO: Send death animation.
+
+        if (this instanceof Player) {
+            Player player = (Player) this;
+
+            // Send player death to all online clients
+            Server.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerDeath(player.getObjectId(), getTransform().getPosition()));
+        } else {
+            // TODO: Send create death packet
+        }
     }
 
     @Override
