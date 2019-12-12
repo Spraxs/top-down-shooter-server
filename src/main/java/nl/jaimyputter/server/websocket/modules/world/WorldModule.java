@@ -32,9 +32,10 @@ public class WorldModule extends Module {
     private final Map<Long, Player> playerObjects = new ConcurrentHashMap<>();
     private final Map<Long, WorldObject> gameObjects = new ConcurrentHashMap<>();
 
-    private final PacketModule packetModule = Server.byModule(PacketModule.class);
+    private PacketModule packetModule;
 
     public void onStart() {
+        packetModule = Server.byModule(PacketModule.class);
     }
 
     public void handlePlayerDisconnect(Client client) {
@@ -55,7 +56,7 @@ public class WorldModule extends Module {
 
         final BoxCollider2 boxCollider2 = new BoxCollider2(transform, colliderOffset, colliderSize);
 
-        final Player player = new Player(transform, boxCollider2, client, name);
+        final Player player = new Player(transform, boxCollider2, client, name, packetModule);
 
         playerObjects.put(player.getObjectId(), player);
 

@@ -31,6 +31,36 @@ public abstract class Task implements Runnable {
         thread.start();
     }
 
+    @Deprecated
+    public void runLater(long timeMillis) {
+         // Run on Task thread
+    }
+
+    public void runASyncLater(long timeInMillis) {
+        runASyncLater(timeInMillis, null);
+    }
+
+    public void runASyncLater(long timeInMillis, String name) {
+        thread = new Thread(() -> {
+            try {
+                sleepRun(timeInMillis);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        if (name != null)
+            thread.setName(name);
+
+        thread.start();
+    }
+
+    private void sleepRun(long timeInMillis) throws InterruptedException {
+        Thread.sleep(timeInMillis);
+
+        run();
+    }
+
     public void cancel() {
 
     }
