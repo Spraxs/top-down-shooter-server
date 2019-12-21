@@ -1,5 +1,7 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.out;
 
+import nl.jaimyputter.server.websocket.Server;
+import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 
 public class PacketOutPlayerConnect extends PacketOut {
@@ -19,7 +21,5 @@ public class PacketOutPlayerConnect extends PacketOut {
     @Override
     public void onDataPrepare() {
         id = 0; // TODO set this value with annotation
-
-
     }
 }

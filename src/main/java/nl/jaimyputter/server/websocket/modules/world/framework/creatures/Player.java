@@ -3,6 +3,8 @@ package nl.jaimyputter.server.websocket.modules.world.framework.creatures;
 import lombok.Getter;
 import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
+import nl.jaimyputter.server.websocket.modules.gamemode.GameModeModule;
+import nl.jaimyputter.server.websocket.modules.gamemode.framework.Team;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDeath;
@@ -23,12 +25,16 @@ public class Player extends Creature {
 
     private final PacketModule packetModule;
 
+    private @Getter Team team;
+
     public Player(Transform transform, BoxCollider2 boxCollider2, Client client, String name, PacketModule packetModule) {
         super(transform, boxCollider2);
         this.client = client;
         this.name = name;
 
         this.packetModule = packetModule;
+
+        this.team = Team.DEFAULT;
     }
 
     public void channelSend(PacketOut packet)
@@ -40,6 +46,8 @@ public class Player extends Creature {
     public void onDeath() {
         super.onDeath();
 
+        addPointToOtherTeam();
+
         // Send player death to all online clients
         Server.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerDeath(getObjectId(), getTransform().getPosition()));
 
@@ -50,6 +58,17 @@ public class Player extends Creature {
                 onRespawn();
             }
         }.runASyncLater(5000);
+    }
+
+    public void addPointToOtherTeam() {
+        if (team == Team.DEFAULT) return;
+        GameModeModule gameModeModule = Server.byModule(GameModeModule.class);
+
+        if (team == Team.BLUE) {
+            gameModeModule.addPoint(Team.RED);
+        } else {
+            gameModeModule.addPoint(Team.BLUE);
+        }
     }
 
     public void onRespawn() {

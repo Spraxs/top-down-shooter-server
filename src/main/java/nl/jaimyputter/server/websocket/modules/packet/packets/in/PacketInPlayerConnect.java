@@ -1,11 +1,13 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.in;
 
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
+import nl.jaimyputter.server.websocket.modules.gamemode.GameModeModule;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnect;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnectOwn;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeJoin;
 import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.Server;
@@ -59,5 +61,11 @@ public class PacketInPlayerConnect extends PacketIn {
                     Player p = c.getPlayer();
                     client.channelSend(new PacketOutPlayerConnect(p.getObjectId(), c.getAccountName(), p.getTransform().getPosition().getX(), p.getTransform().getPosition().getY()));
                 });
+
+
+        GameModeModule gameModeModule = Server.byModule(GameModeModule.class);
+
+        // Send gameMode info
+        client.channelSend(new PacketOutGameModeJoin(gameModeModule.getGameEndTime(), gameModeModule.getRedScore(), gameModeModule.getBlueScore(), gameModeModule.getGameState().getId()));
     }
 }

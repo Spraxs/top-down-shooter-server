@@ -2,11 +2,7 @@ package nl.jaimyputter.server.websocket.modules.world.framework.creatures;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
-import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDeath;
-import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 import nl.jaimyputter.server.websocket.modules.world.framework.WorldObject;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 

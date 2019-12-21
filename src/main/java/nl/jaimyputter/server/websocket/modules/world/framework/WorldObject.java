@@ -5,7 +5,6 @@ import lombok.Setter;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.framework.managers.IdManager;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerPositionChange;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Creature;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;

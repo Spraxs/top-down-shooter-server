@@ -5,7 +5,6 @@ import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutDebugCollider;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerPositionChange;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
