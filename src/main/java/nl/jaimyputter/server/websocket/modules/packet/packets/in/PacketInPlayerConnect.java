@@ -8,6 +8,7 @@ import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnect;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerConnectOwn;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeJoin;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeTeamUpdate;
 import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.Server;
@@ -51,7 +52,9 @@ public class PacketInPlayerConnect extends PacketIn {
         // Send packet to all clients except yourself
         client.channelSend(new PacketOutPlayerConnectOwn(player.getObjectId(), client.getAccountName(), player.getTransform().getPosition().getX(), player.getTransform().getPosition().getY()));
 
-        Server.byModule(PacketModule.class).sendPacketToAllClientsExcept(new PacketOutPlayerConnect(player.getObjectId(),
+        final PacketModule packetModule = Server.byModule(PacketModule.class);
+
+        packetModule.sendPacketToAllClientsExcept(new PacketOutPlayerConnect(player.getObjectId(),
                 client.getAccountName(), player.getTransform().getPosition().getX(), player.getTransform().getPosition().getY()), client);
 
         Server.getOnlineClients().forEach(c -> System.out.println(c.getPlayer().getObjectId()));
@@ -66,6 +69,14 @@ public class PacketInPlayerConnect extends PacketIn {
         GameModeModule gameModeModule = Server.byModule(GameModeModule.class);
 
         // Send gameMode info
-        client.channelSend(new PacketOutGameModeJoin(gameModeModule.getGameEndTime(), gameModeModule.getRedScore(), gameModeModule.getBlueScore(), gameModeModule.getGameState().getId()));
+        client.channelSend(new PacketOutGameModeJoin(gameModeModule.getGameEndTime(), gameModeModule.getRedScore(),
+                gameModeModule.getBlueScore(), gameModeModule.getGameState().getId()));
+
+        packetModule.sendPacketToAllClients(new PacketOutGameModeTeamUpdate(player));
+
+        for (Player p : Server.byModule(WorldModule.class).getAllPlayers()) {
+            if (p.getObjectId() == player.getObjectId()) continue;
+            player.channelSend(new PacketOutGameModeTeamUpdate(p));
+        }
     }
 }

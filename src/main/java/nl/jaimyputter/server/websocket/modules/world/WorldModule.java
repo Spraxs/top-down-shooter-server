@@ -4,6 +4,8 @@ import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
+import nl.jaimyputter.server.websocket.modules.gamemode.GameModeModule;
+import nl.jaimyputter.server.websocket.modules.gamemode.framework.Team;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDisconnect;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
@@ -33,6 +35,7 @@ public class WorldModule extends Module {
     private final Map<Long, WorldObject> gameObjects = new ConcurrentHashMap<>();
 
     private PacketModule packetModule;
+    private GameModeModule gameModeModule;
 
     public void onStart() {
         packetModule = Server.byModule(PacketModule.class);
@@ -52,11 +55,26 @@ public class WorldModule extends Module {
 
     public Player createPlayer(Client client, String name, Vector2 position, Vector2 colliderOffset, Vector2 colliderSize) {
 
+        if (gameModeModule == null) gameModeModule = Server.byModule(GameModeModule.class);
+
         final Transform transform = new Transform(position);
 
         final BoxCollider2 boxCollider2 = new BoxCollider2(transform, colliderOffset, colliderSize);
 
-        final Player player = new Player(transform, boxCollider2, client, name, packetModule);
+        Team team;
+
+        int blueTeamSize = gameModeModule.getBlueTeamSize();
+        int redTeamSize = gameModeModule.getRedTeamSize();
+
+        if (blueTeamSize == redTeamSize) {
+            team = Team.BLUE;
+        } else if (blueTeamSize > redTeamSize) {
+            team = Team.RED;
+        } else {
+            team = Team.BLUE;
+        }
+
+        final Player player = new Player(transform, boxCollider2, client, name, packetModule, team);
 
         playerObjects.put(player.getObjectId(), player);
 

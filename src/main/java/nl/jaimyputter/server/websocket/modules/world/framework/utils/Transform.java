@@ -1,6 +1,5 @@
 package nl.jaimyputter.server.websocket.modules.world.framework.utils;
 
-import lombok.Data;
 import lombok.Getter;
 import nl.jaimyputter.server.websocket.framework.geometry.Vector2;
 

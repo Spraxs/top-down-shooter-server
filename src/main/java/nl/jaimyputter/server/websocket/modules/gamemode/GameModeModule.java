@@ -11,8 +11,8 @@ import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.Packe
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModePointsUpdate;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeStateUpdate;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeWin;
-
-import java.util.Date;
+import nl.jaimyputter.server.websocket.modules.world.WorldModule;
+import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 
 /**
  * Created by Spraxs
@@ -29,11 +29,11 @@ public final class GameModeModule extends Module {
     private @Getter int redScore;
     private @Getter int blueScore;
 
-
     // In milliseconds
     private @Getter long gameEndTime;
 
     private PacketModule packetModule;
+    private WorldModule worldModule;
 
     public GameModeModule() {
         super("GameMode");
@@ -42,9 +42,10 @@ public final class GameModeModule extends Module {
     public void onStart() {
         gameEndTime = System.currentTimeMillis() + (1000 * 10 * 60);
 
+        worldModule = Server.byModule(WorldModule.class);
         packetModule = Server.byModule(PacketModule.class);
 
-        updateGameState(GameState.LOBBY, false);
+        updateGameState(GameState.IN_GAME, false);
 
         redScore = 0;
         blueScore = 0;
@@ -62,6 +63,8 @@ public final class GameModeModule extends Module {
 
 
     public void addPoint(Team team) {
+        if (gameState != GameState.IN_GAME) return; // If gameState is not in-game, return
+
         if (team == Team.RED) {
             redScore++;
 
@@ -96,6 +99,25 @@ public final class GameModeModule extends Module {
         Server.getOnlineClients().stream().filter(client -> client.getPlayer().getTeam() == team).forEach(client -> {
             client.channelSend(new PacketOutGameModeLose());
         });
+    }
 
+    public int getRedTeamSize() {
+        int size = 0;
+
+        for (Player player : worldModule.getAllPlayers()) {
+            if (player.getTeam() == Team.RED) size++;
+        }
+
+        return size;
+    }
+
+    public int getBlueTeamSize() {
+        int size = 0;
+
+        for (Player player : worldModule.getAllPlayers()) {
+            if (player.getTeam() == Team.BLUE) size++;
+        }
+
+        return size;
     }
 }

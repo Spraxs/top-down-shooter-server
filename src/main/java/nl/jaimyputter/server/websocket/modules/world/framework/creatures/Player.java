@@ -27,14 +27,14 @@ public class Player extends Creature {
 
     private @Getter Team team;
 
-    public Player(Transform transform, BoxCollider2 boxCollider2, Client client, String name, PacketModule packetModule) {
+    public Player(Transform transform, BoxCollider2 boxCollider2, Client client, String name, PacketModule packetModule, Team team) {
         super(transform, boxCollider2);
         this.client = client;
         this.name = name;
 
         this.packetModule = packetModule;
 
-        this.team = Team.DEFAULT;
+        this.team = team;
     }
 
     public void channelSend(PacketOut packet)

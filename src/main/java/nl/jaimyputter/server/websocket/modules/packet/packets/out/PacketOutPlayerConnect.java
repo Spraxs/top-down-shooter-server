@@ -1,7 +1,5 @@
 package nl.jaimyputter.server.websocket.modules.packet.packets.out;
 
-import nl.jaimyputter.server.websocket.Server;
-import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 
 public class PacketOutPlayerConnect extends PacketOut {
