@@ -13,12 +13,16 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.Getter;
+import nl.jaimyputter.server.websocket.framework.events.EventManager;
+import nl.jaimyputter.server.websocket.framework.events.framework.registry.EventHandler;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.modules.packet.packets.framework.Encryption;
 import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 import nl.jaimyputter.server.websocket.server.initializer.ClientInitializer;
 import nl.jaimyputter.server.websocket.utils.ReflectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLException;
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +33,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 /**
  * Created by Spraxs
@@ -45,7 +48,9 @@ public final class Server {
 
     private @Getter ConcurrentHashMap<Class, Module> modules = new ConcurrentHashMap<>();
 
-    private @Getter Logger logger;
+    private final static @Getter Logger logger = LoggerFactory.getLogger(Server.class.getSimpleName());
+
+    private static @Getter EventManager eventManager;
 
     public static void main(String[] args) {
         new Server();
@@ -54,13 +59,14 @@ public final class Server {
 
     public Server() {
         Instance = this;
+
         onStart();
         setupServer();
     }
 
     private void onStart() {
 
-        logger = Logger.getLogger("server");
+        eventManager = EventManager.init();
 
         Encryption.init();
 

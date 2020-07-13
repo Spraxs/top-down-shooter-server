@@ -2,14 +2,16 @@ package nl.jaimyputter.server.websocket.modules.world.framework.creatures;
 
 import lombok.Getter;
 import nl.jaimyputter.server.websocket.Server;
+import nl.jaimyputter.server.websocket.framework.events.EventManager;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
-import nl.jaimyputter.server.websocket.modules.gamemode.GameModeModule;
 import nl.jaimyputter.server.websocket.modules.gamemode.framework.Team;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDeath;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerRespawn;
 import nl.jaimyputter.server.websocket.modules.task.framework.Task;
+import nl.jaimyputter.server.websocket.modules.world.events.PlayerDeathEvent;
+import nl.jaimyputter.server.websocket.modules.world.events.PlayerRespawnEvent;
 import nl.jaimyputter.server.websocket.modules.world.framework.utils.Transform;
 import nl.jaimyputter.server.websocket.server.handlers.Client;
 
@@ -46,7 +48,7 @@ public class Player extends Creature {
     public void onDeath() {
         super.onDeath();
 
-        addPointToOtherTeam();
+        EventManager.callEvent(new PlayerDeathEvent(this)); // Call PlayerDeathEvent
 
         // Send player death to all online clients
         Server.byModule(PacketModule.class).sendPacketToAllClients(new PacketOutPlayerDeath(getObjectId(), getTransform().getPosition()));
@@ -60,18 +62,11 @@ public class Player extends Creature {
         }.runASyncLater(5000);
     }
 
-    public void addPointToOtherTeam() {
-        if (team == Team.DEFAULT) return;
-        GameModeModule gameModeModule = Server.byModule(GameModeModule.class);
 
-        if (team == Team.BLUE) {
-            gameModeModule.addPoint(Team.RED);
-        } else {
-            gameModeModule.addPoint(Team.BLUE);
-        }
-    }
 
     public void onRespawn() {
+        EventManager.callEvent(new PlayerRespawnEvent(this)); // Call PlayerRespawnEvent
+
         setAlive(true);
         restoreHealth();
         packetModule.sendPacketToAllClients(new PacketOutPlayerRespawn(getObjectId(), getTransform().getPosition()));

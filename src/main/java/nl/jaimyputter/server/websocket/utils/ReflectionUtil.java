@@ -1,5 +1,7 @@
 package nl.jaimyputter.server.websocket.utils;
+import nl.jaimyputter.server.websocket.framework.events.framework.Listener;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
+import nl.jaimyputter.server.websocket.framework.registry.DontRegister;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
 import nl.jaimyputter.server.websocket.modules.packet.framework.PacketId;
 import nl.jaimyputter.server.websocket.modules.packet.packets.PacketIn;
@@ -13,6 +15,37 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("rawtypes")
 public final class ReflectionUtil {
+
+    /**
+     * Returns the @DontRegister annotation on a Class if present
+     *
+     * @param c the class to examine
+     * @return the annotation.  may be null.
+     */
+    public static DontRegister getClassDontRegisterAnnotation(final Class c) {
+        return getAnnotation(c, DontRegister.class);
+    }
+
+    /**
+     * Check if a class implements a specific interface.
+     *
+     * @param type           the class we want to check
+     * @param interfaceClass the interface class we want to check against
+     * @return true if type implements interfaceClass, else false
+     */
+    public static boolean implementsInterface(final Class<?> type, final Class<?> interfaceClass) {
+        return interfaceClass.isAssignableFrom(type);
+    }
+
+    /**
+     * Checks if a class implements the nl.jaimyputter.server.game.framework.events.framework.Listener interface.
+     *
+     * @param type			the class we want to check
+     * @return true if the class implements the Listener interface, else false
+     */
+    public static boolean isListener(final Class<?> type) {
+        return implementsInterface(type, Listener.class);
+    }
 
     /**
      * Returns the (first) instance of the annotation, on the class (or any superclass, or interfaces implemented).

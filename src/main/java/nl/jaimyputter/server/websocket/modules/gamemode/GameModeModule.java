@@ -2,15 +2,19 @@ package nl.jaimyputter.server.websocket.modules.gamemode;
 
 import lombok.Getter;
 import nl.jaimyputter.server.websocket.Server;
+import nl.jaimyputter.server.websocket.framework.events.EventManager;
 import nl.jaimyputter.server.websocket.framework.modular.Module;
 import nl.jaimyputter.server.websocket.framework.registry.ModulePriority;
+import nl.jaimyputter.server.websocket.modules.gamemode.events.GameTimeOverEvent;
 import nl.jaimyputter.server.websocket.modules.gamemode.framework.GameState;
 import nl.jaimyputter.server.websocket.modules.gamemode.framework.Team;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
+import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDisconnect;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeLose;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModePointsUpdate;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeStateUpdate;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeWin;
+import nl.jaimyputter.server.websocket.modules.task.framework.Task;
 import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 
@@ -40,7 +44,7 @@ public final class GameModeModule extends Module {
     }
 
     public void onStart() {
-        gameEndTime = System.currentTimeMillis() + (1000 * 10 * 60);
+        gameEndTime = System.currentTimeMillis() + (1000 * 10);
 
         worldModule = Server.byModule(WorldModule.class);
         packetModule = Server.byModule(PacketModule.class);
@@ -49,6 +53,8 @@ public final class GameModeModule extends Module {
 
         redScore = 0;
         blueScore = 0;
+
+        setupGameTimeTask();
     }
 
     public void updateGameState(GameState gameState, boolean updatePlayers) {
@@ -58,9 +64,39 @@ public final class GameModeModule extends Module {
             packetModule.sendPacketToAllClients(new PacketOutGameModeStateUpdate(gameState));
         }
 
+        if (gameState == GameState.AFTER_MATCH) {
+            createKickTask();
+        }
+
         // TODO Update database
     }
 
+    private void createKickTask() {
+        new Task() {
+            @Override
+            public void run() {
+                for (Player p : worldModule.getAllPlayers()) {
+                    worldModule.removePlayer(p);
+                }
+                
+                System.exit(0);
+            }
+        }.runASyncLater(1000 * 10);
+    }
+
+    private void setupGameTimeTask() {
+
+        new Task() {
+            @Override
+            public void run() {
+
+                if (System.currentTimeMillis() >= gameEndTime) {
+                    cancel();
+                    EventManager.callEvent(new GameTimeOverEvent());
+                }
+            }
+        }.runASyncTimer(1000L);
+    }
 
     public void addPoint(Team team) {
         if (gameState != GameState.IN_GAME) return; // If gameState is not in-game, return

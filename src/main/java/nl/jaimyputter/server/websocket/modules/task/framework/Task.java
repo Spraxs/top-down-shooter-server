@@ -14,6 +14,8 @@ public abstract class Task implements Runnable {
 
     private @Getter Thread thread;
 
+    private boolean cancelled = false;
+
     public Task() {
         id = TaskModule.Instance.nextId();
     }
@@ -55,6 +57,27 @@ public abstract class Task implements Runnable {
         thread.start();
     }
 
+    public void runASyncTimer(long periodInMillis) {
+        runASyncTimer(periodInMillis, null);
+    }
+
+    public void runASyncTimer(long periodInMillis, String name) {
+        thread = new Thread(() -> {
+            while (!cancelled) {
+                try {
+                    sleepRun(periodInMillis);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        if (name != null)
+            thread.setName(name);
+
+        thread.start();
+    }
+
     private void sleepRun(long timeInMillis) throws InterruptedException {
         Thread.sleep(timeInMillis);
 
@@ -62,6 +85,6 @@ public abstract class Task implements Runnable {
     }
 
     public void cancel() {
-
+        cancelled = true;
     }
 }
