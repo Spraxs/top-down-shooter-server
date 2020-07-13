@@ -1,6 +1,7 @@
 package nl.jaimyputter.server.websocket.modules.world.framework.creatures;
 
 import lombok.Getter;
+import lombok.Setter;
 import nl.jaimyputter.server.websocket.Server;
 import nl.jaimyputter.server.websocket.framework.events.EventManager;
 import nl.jaimyputter.server.websocket.framework.geometry.BoxCollider2;
@@ -26,6 +27,8 @@ public class Player extends Creature {
     private @Getter final String name;
 
     private final PacketModule packetModule;
+
+    private @Getter @Setter Transform handTransform;
 
     private @Getter Team team;
 

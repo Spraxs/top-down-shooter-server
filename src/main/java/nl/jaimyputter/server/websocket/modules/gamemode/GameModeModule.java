@@ -44,7 +44,7 @@ public final class GameModeModule extends Module {
     }
 
     public void onStart() {
-        gameEndTime = System.currentTimeMillis() + (1000 * 10);
+        gameEndTime = System.currentTimeMillis() + (1000 * 60 * 10);
 
         worldModule = Server.byModule(WorldModule.class);
         packetModule = Server.byModule(PacketModule.class);
