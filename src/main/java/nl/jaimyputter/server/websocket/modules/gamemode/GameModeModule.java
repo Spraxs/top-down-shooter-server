@@ -28,7 +28,7 @@ public final class GameModeModule extends Module {
 
     private @Getter GameState gameState;
 
-    private static final int MAX_SCORE = 75;
+    private static final int MAX_SCORE = 10;
 
     private @Getter int redScore;
     private @Getter int blueScore;
@@ -44,7 +44,7 @@ public final class GameModeModule extends Module {
     }
 
     public void onStart() {
-        gameEndTime = System.currentTimeMillis() + (1000 * 60 * 10);
+        gameEndTime = System.currentTimeMillis() + (1000 * 60 * 4);
 
         worldModule = Server.byModule(WorldModule.class);
         packetModule = Server.byModule(PacketModule.class);
