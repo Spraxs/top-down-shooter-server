@@ -9,7 +9,6 @@ import nl.jaimyputter.server.websocket.modules.gamemode.events.GameTimeOverEvent
 import nl.jaimyputter.server.websocket.modules.gamemode.framework.GameState;
 import nl.jaimyputter.server.websocket.modules.gamemode.framework.Team;
 import nl.jaimyputter.server.websocket.modules.packet.PacketModule;
-import nl.jaimyputter.server.websocket.modules.packet.packets.out.PacketOutPlayerDisconnect;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeLose;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModePointsUpdate;
 import nl.jaimyputter.server.websocket.modules.packet.packets.out.gamemode.PacketOutGameModeStateUpdate;
@@ -78,10 +77,10 @@ public final class GameModeModule extends Module {
                 for (Player p : worldModule.getAllPlayers()) {
                     worldModule.removePlayer(p);
                 }
-                
+
                 System.exit(0);
             }
-        }.runASyncLater(1000 * 10);
+        }.runASyncLater(1000 * 10L);
     }
 
     private void setupGameTimeTask() {
