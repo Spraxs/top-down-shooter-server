@@ -1,0 +1,8 @@
+# Created once by Locus and never overwritten: this file is yours.
+# Add what the image does not need, such as large data directories.
+.git
+.github
+.idea
+.vscode
+**/.DS_Store
+target
