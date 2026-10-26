@@ -36,7 +36,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class Server {
 
     public static final boolean SSL = System.getProperty("ssl") != null;
-    public static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "25566" : "25565"));
+    private static final String DEFAULT_PORT = SSL ? "25566" : "25565";
+    // -Dport wins, then the PORT environment variable (how a container is told), then the default
+    public static final int PORT = Integer.parseInt(
+            System.getProperty("port", System.getenv().getOrDefault("PORT", DEFAULT_PORT)));
 
     private static Server Instance;
 
