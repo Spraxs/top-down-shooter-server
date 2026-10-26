@@ -23,7 +23,6 @@ import nl.jaimyputter.server.websocket.modules.packet.packets.PacketOut;
 import nl.jaimyputter.server.websocket.modules.world.WorldModule;
 import nl.jaimyputter.server.websocket.modules.world.framework.creatures.Player;
 import nl.jaimyputter.server.websocket.Server;
-import nl.jaimyputter.server.websocket.server.utils.ServerBenchmarkPage;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpMethod.*;
@@ -43,6 +42,7 @@ public class Client extends SimpleChannelInboundHandler<Object> {
     }
 
     private static final String WEBSOCKET_PATH = "/websocket";
+    private static final String WEBSOCKET_UPGRADE = "websocket";
 
     private final @Getter PacketModule packetModule;
     private final @Getter WorldModule worldModule;
@@ -159,20 +159,16 @@ public class Client extends SimpleChannelInboundHandler<Object> {
             return;
         }
 
-        // Send the demo page and favicon.ico
-        if ("/".equals(req.getUri())) {
-            ByteBuf content = ServerBenchmarkPage.getContent(getWebSocketLocation(req));
-            FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
-
-            res.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
-            HttpHeaders.setContentLength(res, content.readableBytes());
-
-            sendHttpResponse(ctx, req, res);
-            return;
-        }
         if ("/favicon.ico".equals(req.getUri())) {
             FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND);
             sendHttpResponse(ctx, req, res);
+            return;
+        }
+
+        // Every other path, "/" included, is a WebSocket handshake. A plain request (a browser,
+        // a reachability check) gets an answer instead of a dropped connection.
+        if (!WEBSOCKET_UPGRADE.equalsIgnoreCase(req.headers().get(UPGRADE))) {
+            sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UPGRADE_REQUIRED));
             return;
         }
 

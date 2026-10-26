@@ -123,7 +123,7 @@ public final class Server {
 
                     Channel ch = b.bind(PORT).sync().channel();
 
-                    System.out.println("Open your web browser and navigate to " +
+                    System.out.println("WebSocket server listening on " +
                             (SSL ? "https" : "http") + "://127.0.0.1:" + PORT + '/');
 
                     ch.closeFuture().sync();
