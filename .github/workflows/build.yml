@@ -22,25 +22,21 @@ jobs:
         id: image-builder
         shell: bash
         run: "endpoints=($BUILDKIT_ENDPOINTS)\nif [ \"${#endpoints[@]}\" -eq 0 ] ||
-          [ ! -r /etc/buildkit/certs/tls.crt ]; then\n  echo \"Deze runner heeft geen
-          gedeelde builder; hij bouwt zelf.\"\n  exit 0\nfi\nchecksum=$(printf '%s'
-          \"$GITHUB_REPOSITORY\" | cksum | cut -d ' ' -f 1)\nendpoint=${endpoints[$((
-          checksum % ${#endpoints[@]} ))]}\naddress=${endpoint#tcp://}\nif timeout
-          5 bash -c \"exec 3<>/dev/tcp/${address%:*}/${address##*:}\" 2>/dev/null;
-          then\n  echo \"endpoint=$endpoint\" >> \"$GITHUB_OUTPUT\"\n  echo \"Gedeelde
-          builder: $endpoint\"\nelse\n  echo \"::warning::De gedeelde builder $endpoint
-          is niet bereikbaar; de runner bouwt zelf, zonder cache.\"\nfi\n"
+          [ ! -r /etc/buildkit/certs/tls.crt ]; then\n  echo \"::error::This runner
+          has no shared image builder (BUILDKIT_ENDPOINTS or its certificate is missing).\"\
+          \n  exit 1\nfi\nchecksum=$(printf '%s' \"$GITHUB_REPOSITORY\" | cksum |
+          cut -d ' ' -f 1)\nendpoint=${endpoints[$(( checksum % ${#endpoints[@]} ))]}\n\
+          address=${endpoint#tcp://}\nif ! timeout 5 bash -c \"exec 3<>/dev/tcp/${address%:*}/${address##*:}\"\
+          \ 2>/dev/null; then\n  echo \"::error::The shared image builder $endpoint
+          cannot be reached. Run 'locus recovery'.\"\n  exit 1\nfi\necho \"endpoint=$endpoint\"\
+          \ >> \"$GITHUB_OUTPUT\"\necho \"Shared image builder: $endpoint\"\n"
       - name: Use the shared image builder
-        if: steps.image-builder.outputs.endpoint != ''
         uses: docker/setup-buildx-action@v4
         with:
           driver: remote
           endpoint: ${{ steps.image-builder.outputs.endpoint }}
           driver-opts: "cacert=/etc/buildkit/certs/ca.crt\ncert=/etc/buildkit/certs/tls.crt\n\
             key=/etc/buildkit/certs/tls.key\n"
-      - name: Set up a local image builder
-        if: steps.image-builder.outputs.endpoint == ''
-        uses: docker/setup-buildx-action@v4
       - name: Login to Docker registry
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v4
@@ -63,14 +59,14 @@ jobs:
         with:
           script: "const environments = {\"production\": \"production\"};\nconst branch
             = context.ref.replace(/^refs\\/heads\\//, '');\nconst environment = environments[branch];\n\
-            if (!environment) {\n  throw new Error(`Branch ${branch} hoort bij geen
+            if (!environment) {\n  throw new Error(`Branch ${branch} belongs to no
             environment.`);\n}\nconst token = await core.getIDToken('locus-deployments');\n\
             const response = await fetch(\n  `${process.env.LOCUS_API_URL}/applications/radioactive-server/deployments`,\n\
             \  {\n    method: 'POST',\n    headers: {\n      Authorization: `Bearer
             ${token}`,\n      'Content-Type': 'application/json',\n    },\n    body:
             JSON.stringify({ revision: context.sha, environment }),\n  },\n);\nif
             (!response.ok) {\n  if (response.status === 404) {\n    throw new Error('Locus
-            deployment API is nog niet online. '      + 'Deploy eerst de actuele Locus
-            API.');\n  }\n  throw new Error(`Locus rejected deployment: ${response.status}
+            deployment API is not online yet. '      + 'Deploy the current Locus API
+            first.');\n  }\n  throw new Error(`Locus rejected deployment: ${response.status}
             ${await response.text()}`);\n}\nconst deployment = await response.json();\n\
             core.info(`Deployment of ${environment} queued: ${deployment.check_run_id}`);"
